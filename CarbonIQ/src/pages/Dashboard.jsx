@@ -15,9 +15,9 @@ export default function CarbonIQDashboard() {
         </div>
 
         {/* Stats Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="flex gap-6 mb-8 overflow-x-auto">
           {/* Total Emission Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Emission</p>
@@ -31,7 +31,7 @@ export default function CarbonIQDashboard() {
           </div>
 
           {/* This Month Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 h-full">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">This Month</p>
@@ -45,7 +45,7 @@ export default function CarbonIQDashboard() {
           </div>
 
           {/* Activities Logged Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 h-full">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Activities Logged</p>
@@ -59,7 +59,7 @@ export default function CarbonIQDashboard() {
           </div>
 
           {/* Active Goals Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 h-full">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Active Goals</p>
