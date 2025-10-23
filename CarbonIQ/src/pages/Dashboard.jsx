@@ -1,10 +1,25 @@
 import React from 'react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function CarbonIQDashboard() {
+  // Emissions trend data
+  const emissionsData = [
+    { date: 'Jan 19', value: 0 },
+    { date: 'Feb 26', value: 1 },
+    { date: 'Mar 27', value: 2 },
+    { date: 'Apr 29', value: 3 },
+    { date: 'May 30', value: 2 },
+    { date: 'Jun 31', value: 2.5 },
+    { date: 'Jul 30', value: 3 },
+    { date: 'Aug 02', value: 2 },
+    { date: 'Sep 08', value: 1 },
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Welcome Header Section */}
+      
+
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Welcome to CarbonIQ
@@ -14,9 +29,8 @@ export default function CarbonIQDashboard() {
           </p>
         </div>
 
-        {/* Stats Cards Section */}
         <div className="flex gap-6 mb-8 overflow-x-auto">
-          {/* Total Emission Card */}
+         
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -30,8 +44,8 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          {/* This Month Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 h-full">
+       
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">This Month</p>
@@ -44,8 +58,8 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          {/* Activities Logged Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 h-full">
+          
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Activities Logged</p>
@@ -58,8 +72,8 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          {/* Active Goals Card */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 h-full">
+          
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Active Goals</p>
@@ -70,6 +84,44 @@ export default function CarbonIQDashboard() {
                 <span className="text-2xl">🎯</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 mb-8">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Emissions Trend (Last 30 Days)
+          </h2>
+          <div className="h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={emissionsData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis 
+                  dataKey="date" 
+                  stroke="#9ca3af"
+                  style={{ fontSize: '12px' }}
+                />
+                <YAxis 
+                  stroke="#9ca3af"
+                  style={{ fontSize: '12px' }}
+                  label={{ value: 'kg CO₂', angle: -90, position: 'insideLeft' }}
+                />
+                <Tooltip 
+                  contentStyle={{ 
+                    backgroundColor: '#fff',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '8px'
+                  }}
+                />
+                <Line 
+                  type="monotone" 
+                  dataKey="value" 
+                  stroke="#10b981" 
+                  strokeWidth={2}
+                  dot={{ fill: '#10b981', r: 4 }}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </div>
