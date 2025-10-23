@@ -2,7 +2,7 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
 export default function CarbonIQDashboard() {
-  // Emissions trend data
+
   const emissionsData = [
     { date: 'Dec 19', value: 0 },
     { date: 'Jan 26', value: 1 },
@@ -15,7 +15,7 @@ export default function CarbonIQDashboard() {
     { date: 'Oct 08', value: 1 },
   ];
 
-  // Top emitters data
+
   const topEmittersData = [
     { name: 'Air Travel Model-Y', value: 35, color: '#f59e0b' },
     { name: 'Refrigerator X200', value: 30, color: '#10b981' },
@@ -23,7 +23,7 @@ export default function CarbonIQDashboard() {
     { name: 'Work Truck Z30', value: 15, color: '#8b5cf6' },
   ];
 
-  // Recent activities data
+  
   const recentActivities = [
     {
       title: 'My Tesla Model 3',
@@ -66,7 +66,7 @@ export default function CarbonIQDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        {/* Welcome Header Section */}
+       
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Welcome to CarbonIQ
@@ -76,9 +76,9 @@ export default function CarbonIQDashboard() {
           </p>
         </div>
 
-        {/* Stats Cards Section */}
+    
         <div className="flex gap-6 mb-8 overflow-x-auto">
-          {/* Total Emission Card */}
+     
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -92,7 +92,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          {/* This Month Card */}
+         
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -106,7 +106,6 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          {/* Activities Logged Card */}
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -120,7 +119,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          {/* Active Goals Card */}
+      
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -135,9 +134,9 @@ export default function CarbonIQDashboard() {
           </div>
         </div>
 
-        {/* Emissions Trend and Top Emitters Section */}
+        
         <div className="flex gap-6 mb-8">
-          {/* Emissions Trend Chart */}
+        
           <div className="flex-[2] bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Emissions Trend (Last 30 Days)
@@ -176,7 +175,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          {/* Top Emitters Pie Chart */}
+       
           <div className="flex-1 bg-white rounded-lg shadow-sm p-6 border border-gray-200 flex flex-col">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Top Emitters
@@ -219,10 +218,38 @@ export default function CarbonIQDashboard() {
           </div>
         </div>
 
-        
-          
-              ))}
-            </div>
+     
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Recent Activities
+          </h2>
+          <div className="space-y-4">
+            {recentActivities.map((activity, index) => (
+              <div key={index} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
+                <div className="flex items-center gap-4">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-xl">
+                    {activity.icon}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-medium text-gray-900">{activity.title}</h3>
+                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                        {activity.badge}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <span>📅 {activity.date}</span>
+                      <span>•</span>
+                      <span>📍 {activity.location}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-bold text-gray-900">{activity.amount}</p>
+                  <p className="text-xs text-gray-500">{activity.unit}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
