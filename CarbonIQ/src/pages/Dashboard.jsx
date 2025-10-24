@@ -2,7 +2,7 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
 export default function CarbonIQDashboard() {
-
+ 
   const emissionsData = [
     { date: 'Dec 19', value: 0 },
     { date: 'Jan 26', value: 1 },
@@ -15,7 +15,7 @@ export default function CarbonIQDashboard() {
     { date: 'Oct 08', value: 1 },
   ];
 
-
+  
   const topEmittersData = [
     { name: 'Air Travel Model-Y', value: 35, color: '#f59e0b' },
     { name: 'Refrigerator X200', value: 30, color: '#10b981' },
@@ -66,7 +66,7 @@ export default function CarbonIQDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-       
+        
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Welcome to CarbonIQ
@@ -76,9 +76,9 @@ export default function CarbonIQDashboard() {
           </p>
         </div>
 
-    
         <div className="flex gap-6 mb-8 overflow-x-auto">
-     
+          
+
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -92,7 +92,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-         
+        
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -106,6 +106,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
+          
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -119,7 +120,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-      
+          
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -134,9 +135,8 @@ export default function CarbonIQDashboard() {
           </div>
         </div>
 
-        
         <div className="flex gap-6 mb-8">
-        
+         
           <div className="flex-[2] bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Emissions Trend (Last 30 Days)
@@ -175,23 +175,22 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-       
-          <div className="flex-1 bg-white rounded-lg shadow-sm p-6 border border-gray-200 flex flex-col">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          
+          <div className="flex-1 bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">
               Top Emitters
             </h2>
-            <div className="flex-1 flex items-center justify-center">
-              <div className="w-full h-64">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-64 h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={topEmittersData}
                       cx="50%"
                       cy="50%"
-                      innerRadius={60}
-                      outerRadius={90}
-                      paddingAngle={2}
+                      outerRadius={100}
                       dataKey="value"
+                      strokeWidth={0}
                     >
                       {topEmittersData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -202,23 +201,21 @@ export default function CarbonIQDashboard() {
                 </ResponsiveContainer>
               </div>
             </div>
-            <div className="mt-4 space-y-3">
+            <div className="space-y-3 px-2">
               {topEmittersData.map((item, index) => (
-                <div key={index} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <div 
-                      className="w-3 h-3 rounded-full flex-shrink-0" 
-                      style={{ backgroundColor: item.color }}
-                    />
-                    <span className="text-gray-700 text-xs">{item.name}</span>
-                  </div>
+                <div key={index} className="flex items-center gap-3">
+                  <div 
+                    className="w-4 h-4 rounded-sm flex-shrink-0" 
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span className="text-gray-700 text-sm font-medium">{item.name}</span>
                 </div>
               ))}
             </div>
           </div>
         </div>
 
-     
+       
         <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Recent Activities
