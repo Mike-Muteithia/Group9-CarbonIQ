@@ -2,7 +2,7 @@ import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
 export default function CarbonIQDashboard() {
- 
+  // Emissions trend data
   const emissionsData = [
     { date: 'Dec 19', value: 0 },
     { date: 'Jan 26', value: 1 },
@@ -15,7 +15,7 @@ export default function CarbonIQDashboard() {
     { date: 'Oct 08', value: 1 },
   ];
 
-  
+  // Top emitters data
   const topEmittersData = [
     { name: 'Air Travel Model-Y', value: 35, color: '#f59e0b' },
     { name: 'Refrigerator X200', value: 30, color: '#10b981' },
@@ -23,7 +23,7 @@ export default function CarbonIQDashboard() {
     { name: 'Work Truck Z30', value: 15, color: '#8b5cf6' },
   ];
 
-  
+  // Recent activities data
   const recentActivities = [
     {
       title: 'My Tesla Model 3',
@@ -32,6 +32,7 @@ export default function CarbonIQDashboard() {
       amount: '14.20',
       unit: 'kg CO₂',
       badge: 'vehicle',
+      iconBg: 'bg-blue-500',
       icon: '🚗'
     },
     {
@@ -41,6 +42,7 @@ export default function CarbonIQDashboard() {
       amount: '22.78',
       unit: 'kg CO₂',
       badge: 'vehicle',
+      iconBg: 'bg-blue-500',
       icon: '🚚'
     },
     {
@@ -50,6 +52,7 @@ export default function CarbonIQDashboard() {
       amount: '30.40',
       unit: 'kg CO₂',
       badge: 'vehicle',
+      iconBg: 'bg-blue-500',
       icon: '🚗'
     },
     {
@@ -59,6 +62,7 @@ export default function CarbonIQDashboard() {
       amount: '32.16',
       unit: 'kg CO₂',
       badge: 'machine',
+      iconBg: 'bg-blue-500',
       icon: '🏗️'
     },
   ];
@@ -66,7 +70,7 @@ export default function CarbonIQDashboard() {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        
+    
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
             Welcome to CarbonIQ
@@ -76,9 +80,9 @@ export default function CarbonIQDashboard() {
           </p>
         </div>
 
+        
         <div className="flex gap-6 mb-8 overflow-x-auto">
           
-
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -92,7 +96,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-        
+       
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -120,7 +124,6 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          
           <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 min-w-[240px] flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -135,8 +138,9 @@ export default function CarbonIQDashboard() {
           </div>
         </div>
 
+        
         <div className="flex gap-6 mb-8">
-         
+       
           <div className="flex-[2] bg-white rounded-lg shadow-sm p-6 border border-gray-200">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Emissions Trend (Last 30 Days)
@@ -180,15 +184,16 @@ export default function CarbonIQDashboard() {
             <h2 className="text-lg font-semibold text-gray-900 mb-6">
               Top Emitters
             </h2>
-            <div className="flex items-center justify-center mb-6">
-              <div className="w-64 h-64">
+            <div className="flex items-center justify-between gap-6">
+      
+              <div className="w-48 h-48 flex-shrink-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
                       data={topEmittersData}
                       cx="50%"
                       cy="50%"
-                      outerRadius={100}
+                      outerRadius={80}
                       dataKey="value"
                       strokeWidth={0}
                     >
@@ -200,22 +205,24 @@ export default function CarbonIQDashboard() {
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-            </div>
-            <div className="space-y-3 px-2">
-              {topEmittersData.map((item, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <div 
-                    className="w-4 h-4 rounded-sm flex-shrink-0" 
-                    style={{ backgroundColor: item.color }}
-                  />
-                  <span className="text-gray-700 text-sm font-medium">{item.name}</span>
-                </div>
-              ))}
+              
+           
+              <div className="flex-1 space-y-3">
+                {topEmittersData.map((item, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <div 
+                      className="w-4 h-4 rounded-sm flex-shrink-0" 
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <span className="text-gray-700 text-sm">{item.name}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-       
+      
         <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
             Recent Activities
@@ -223,26 +230,47 @@ export default function CarbonIQDashboard() {
           <div className="space-y-4">
             {recentActivities.map((activity, index) => (
               <div key={index} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-xl">
+                <div className="flex items-center gap-4 flex-1">
+                
+                  <div className={`w-10 h-10 ${activity.iconBg} rounded-full flex items-center justify-center text-white text-xl flex-shrink-0`}>
                     {activity.icon}
                   </div>
-                  <div>
+                  
+                  <div className="flex-1">
+                  
                     <div className="flex items-center gap-2 mb-1">
                       <h3 className="font-medium text-gray-900">{activity.title}</h3>
-                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full">
+                      <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded font-medium">
                         {activity.badge}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-sm text-gray-500">
-                      <span>📅 {activity.date}</span>
+                    
+                    
+                    <div className="flex items-center gap-3 text-sm text-gray-500">
+                      <div className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeWidth="2"/>
+                          <line x1="16" y1="2" x2="16" y2="6" strokeWidth="2"/>
+                          <line x1="8" y1="2" x2="8" y2="6" strokeWidth="2"/>
+                          <line x1="3" y1="10" x2="21" y2="10" strokeWidth="2"/>
+                        </svg>
+                        <span>{activity.date}</span>
+                      </div>
                       <span>•</span>
-                      <span>📍 {activity.location}</span>
+                      <div className="flex items-center gap-1">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>{activity.location}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-lg font-bold text-gray-900">{activity.amount}</p>
+                
+               
+                <div className="text-right ml-4">
+                  <p className="text-lg font-bold text-green-600">{activity.amount}</p>
                   <p className="text-xs text-gray-500">{activity.unit}</p>
                 </div>
               </div>
