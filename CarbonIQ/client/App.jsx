@@ -12,7 +12,7 @@ function App() {
         <Sidebar />
         
         {/* Main Content - Add ml-64 to account for fixed sidebar width */}
-        <main className="flex-1 ml-64 p-8">
+       <main className="flex-1 ml-64 pl-4 pr-8 py-4">
           <Routes>
             <Route path="/" element={<CarbonIQDashboard />} />
             <Route path="/assets" element={<MyAssetsPage />} />
