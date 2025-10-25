@@ -6,11 +6,11 @@ const Sidebar = () => {
   const [activeItem, setActiveItem] = useState('My Assets');
 
   const menuItems = [
-    { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-    { name: 'My Assets', icon: Briefcase, path: '/assets' },
-    { name: 'Activities', icon: Activity, path: '/activities' },
-    { name: 'AI EcoCoach', icon: Bot, path: '/eco-coach' },
-    { name: 'Goals', icon: Target, path: '/goals' },
+    { name: 'Dashboard', icon: LayoutDashboard, path: '/Dashboard' },
+    { name: 'My Assets', icon: Briefcase, path: '/MyAssets' },
+    { name: 'Activities', icon: Activity, path: '/Activities' },
+    { name: 'AI EcoCoach', icon: Bot, path: '/Ecocoach' },
+    { name: 'Goals', icon: Target, path: '/Goals' },
   ];
 
   return (
@@ -76,11 +76,7 @@ const Sidebar = () => {
         </div>
       </aside>
 
-      {/* Main Content Placeholder */}
-      <main className="ml-64 flex-1 p-8">
-        <h2 className="text-2xl font-semibold text-gray-800">My Assets</h2>
-        <p className="mt-2 text-gray-500">Manage your vehicles, aircraft, and machines here.</p>
-      </main>
+     
     </div>
   );
 };
