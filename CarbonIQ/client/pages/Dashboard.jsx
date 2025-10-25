@@ -1,5 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+// import leafImage from "../assets/leaf.png";
 
 
 
@@ -66,7 +67,7 @@ export default function CarbonIQDashboard() {
       badge: 'machine',
       iconBg: 'bg-blue-500',
       icon: '🏗️'
-    },
+     }   ,   
   ];
 
   return (
@@ -93,7 +94,7 @@ export default function CarbonIQDashboard() {
                 <p className="text-xs text-red-500 mt-1">+0.5kg 11.5%</p>
               </div>
               <div className="bg-green-100 p-2 rounded-lg">
-                <span className="text-2xl">🌱</span>
+                <span className="text-2xl"></span>
               </div>
             </div>
           </div>
