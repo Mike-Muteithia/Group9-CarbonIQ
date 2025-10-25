@@ -16,6 +16,12 @@ function App() {
           <Routes>
             <Route path="/" element={<CarbonIQDashboard />} />
             <Route path="/assets" element={<MyAssetsPage />} />
+            <Route path="/Dashboard" element={<CarbonIQDashboard />} />
+            <Route path="/MyAssets" element={<MyAssetsPage />} />
+            {/* <Route path="/Activities" element={<ActivitiesPage />} />
+            <Route path="/Ecocoach" element={<EcoCoachPage />} />
+            <Route path="/Goals" element={<GoalsPage />} /> */}
+   
           </Routes>
         </main>
       </div>
