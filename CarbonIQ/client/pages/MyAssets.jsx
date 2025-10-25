@@ -1,59 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
+import AddAssetForm from '../components/AddAssetForm';
+
 
 export default function MyAssetsPage() {
-  // Asset data
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const assets = [
-    {
-      id: 1,
-      name: 'Excavator X300',
-      type: 'machine',
-      fuelType: 'diesel',
-      model: 'CAT 320',
-      year: '2019',
-      emoji: '🏗️'
-    },
-    {
-      id: 2,
-      name: 'Work Truck',
-      type: 'vehicle',
-      fuelType: 'diesel',
-      model: 'Toyota Hilux',
-      year: '2020',
-      emoji: '🚚'
-    },
-    {
-      id: 3,
-      name: 'My Tesla Model 3',
-      type: 'vehicle',
-      fuelType: 'electric',
-      model: 'Tesla Model 3',
-      year: '2023',
-      emoji: '🚗'
-    }
+    { id: 1, name: 'Excavator X300', type: 'machine', fuelType: 'diesel', model: 'CAT 320', year: '2019', emoji: '🏗️' },
+    { id: 2, name: 'Work Truck', type: 'vehicle', fuelType: 'diesel', model: 'Toyota Hilux', year: '2020', emoji: '🚚' },
+    { id: 3, name: 'My Tesla Model 3', type: 'vehicle', fuelType: 'electric', model: 'Tesla Model 3', year: '2023', emoji: '🚗' }
   ];
 
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto">
-        
-        {/* Page Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">My Assets</h1>
             <p className="text-gray-500 text-sm">Manage your vehicles, aircraft, and machines</p>
           </div>
-          <button className="flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition shadow-sm">
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition shadow-sm"
+          >
             <span className="text-lg font-bold">+</span>
             <span>Add Asset</span>
           </button>
         </div>
 
-        
-        <div className="flex gap-5 mb-8">
+        <div className="flex gap-5 mb-8 flex-wrap">
           {assets.map((asset) => (
             <div key={asset.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-5 w-[280px]">
-              
-              {/* Card Top - Icon and Action Buttons */}
               <div className="flex items-start justify-between mb-4">
                 <div className="w-11 h-11 bg-green-500 rounded-lg flex items-center justify-center text-white text-xl">
                   {asset.emoji}
@@ -71,24 +48,11 @@ export default function MyAssetsPage() {
                   </button>
                 </div>
               </div>
-
-           
               <h3 className="text-base font-semibold text-gray-900 mb-3">{asset.name}</h3>
-
               <div className="flex gap-2 mb-4">
-                <span className="px-2.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">
-                  {asset.type}
-                </span>
-                <span className={`px-2.5 py-0.5 text-xs font-medium rounded ${
-                  asset.fuelType === 'diesel' 
-                    ? 'bg-yellow-100 text-yellow-700' 
-                    : 'bg-green-100 text-green-700'
-                }`}>
-                  {asset.fuelType}
-                </span>
+                <span className="px-2.5 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded">{asset.type}</span>
+                <span className={`px-2.5 py-0.5 text-xs font-medium rounded ${asset.fuelType === 'diesel' ? 'bg-yellow-100 text-yellow-700' : 'bg-green-100 text-green-700'}`}>{asset.fuelType}</span>
               </div>
-
-              {/* Asset Details */}
               <div className="text-xs text-gray-500 space-y-1">
                 <p>{asset.model}</p>
                 <p>Year: {asset.year}</p>
@@ -96,8 +60,9 @@ export default function MyAssetsPage() {
             </div>
           ))}
         </div>
-</div>
-</div>
-       
+
+        {isModalOpen && <AddAssetForm onClose={() => setIsModalOpen(false)} />}
+      </div>
+    </div>
   );
 }
