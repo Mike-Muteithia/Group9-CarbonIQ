@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, Activity, Bot, Target } from 'lucide-react';
 import logo from '../assets/Logo.png';
+import MetricsCard from './components/MetricsCard'; // Import MetricsCard
 
 const Sidebar = () => {
   const location = useLocation();
   const [activeItem, setActiveItem] = useState('Dashboard');
+  const userId = 1; // Get this from auth context later
 
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/' },
@@ -62,12 +64,8 @@ const Sidebar = () => {
 
       {/* Bottom Section */}
       <div>
-        {/* Impact Section */}
-        <div className="mx-4 mb-4 bg-green-50 border border-green-100 rounded-lg px-4 py-3">
-          <p className="text-xs text-gray-600 mb-1 font-medium">This Month</p>
-          <p className="text-sm text-green-600 font-semibold">+12%</p>
-          <p className="text-xs text-green-700">You're reducing emissions! </p>
-        </div>
+        {/* Impact Section - Now using MetricsCard */}
+        <MetricsCard userId={userId} />
 
         {/* User Profile */}
         <div className="px-4 py-3 border-t border-gray-200 flex items-center gap-3">

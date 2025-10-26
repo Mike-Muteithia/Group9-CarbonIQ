@@ -168,46 +168,48 @@ class Goal(db.Model):
         return f"<Goal {self.title} ({self.status})>"
 
 
+
+
 class MonthlySummary(db.Model):
-    """Store pre-calculated monthly data for faster dashboard queries"""
     __tablename__ = "monthly_summaries"
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     year = db.Column(db.Integer, nullable=False)
-    month = db.Column(db.Integer, nullable=False)  # 1-12
+    month = db.Column(db.Integer, nullable=False)
     
-    # Calculated totals
     total_emissions = db.Column(db.Float, default=0.0)
+    previous_month_emissions = db.Column(db.Float, default=0.0)
+    percent_change = db.Column(db.Float, default=0.0)
+    
+    # Category breakdown
     electricity_emissions = db.Column(db.Float, default=0.0)
     transport_emissions = db.Column(db.Float, default=0.0)
     food_emissions = db.Column(db.Float, default=0.0)
     other_emissions = db.Column(db.Float, default=0.0)
     
-    # Comparison data
-    previous_month_emissions = db.Column(db.Float, default=0.0)
-    percent_change = db.Column(db.Float, default=0.0)
-    
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
     
-    # Unique constraint - one summary per user per month
-    __table_args__ = (db.UniqueConstraint('user_id', 'year', 'month', name='unique_user_monthly_summary'),)
-
+    # Unique constraint
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'year', 'month', name='unique_user_month'),
+    )
+    
     def to_dict(self):
         return {
             'id': self.id,
+            'user_id': self.user_id,
             'year': self.year,
             'month': self.month,
             'total_emissions': float(self.total_emissions),
-            'electricity_emissions': float(self.electricity_emissions),
-            'transport_emissions': float(self.transport_emissions),
-            'food_emissions': float(self.food_emissions),
-            'other_emissions': float(self.other_emissions),
             'previous_month_emissions': float(self.previous_month_emissions),
             'percent_change': float(self.percent_change),
-            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+            'electricity': float(self.electricity_emissions),
+            'transport': float(self.transport_emissions),
+            'food': float(self.food_emissions),
+            'other': float(self.other_emissions)
         }
-
+    
     def __repr__(self):
-        return f"<MonthlySummary {self.year}-{self.month}: {self.total_emissions} kg CO₂>"
+        return f"<MonthlySummary {self.year}-{self.month} User:{self.user_id}>"
