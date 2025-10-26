@@ -202,7 +202,7 @@ class EmissionService:
     @staticmethod
     def get_dashboard_stats(user_id):
         """Get dashboard statistics from monthly summary"""
-        try:
+        try:  # FIXED: Proper indentation
             current_date = datetime.now()
             summary = MonthlySummary.query.filter_by(
                 user_id=user_id,
@@ -211,7 +211,6 @@ class EmissionService:
             ).first()
             
             if not summary:
-                # Return default values if no data
                 return {
                     'total_emissions': 0,
                     'change_percent': 0,
@@ -226,12 +225,17 @@ class EmissionService:
                     }
                 }
             
+            # FIX: Correct the logic
+            # percent_change > 0 means emissions DECREASED (good!)
+            change_type = 'decrease' if summary.percent_change > 0 else 'increase'
+            message = "You're reducing emissions! 🌱" if summary.percent_change > 0 else "Emissions increased this month"
+            
             return {
                 'total_emissions': round(summary.total_emissions, 2),
                 'change_percent': round(abs(summary.percent_change), 1),
-                'change_type': 'increase' if summary.percent_change > 0 else 'decrease',
+                'change_type': change_type,  # FIXED
                 'period': 'This Month',
-                'message': 'You\'re reducing emissions!' if summary.percent_change > 0 else 'Emissions increased this month',
+                'message': message,  # FIXED
                 'category_breakdown': {
                     'electricity': round(summary.electricity_emissions, 2),
                     'transport': round(summary.transport_emissions, 2),
@@ -243,3 +247,5 @@ class EmissionService:
         except Exception as e:
             print(f"Error getting dashboard stats: {e}")
             raise e
+
+
