@@ -74,6 +74,8 @@ class Asset(db.Model):
         return f"<Asset {self.name} ({self.type})>"
 
 
+# Update your Emission model to include these fields:
+
 class Emission(db.Model):
     __tablename__ = "emissions"
 
@@ -81,39 +83,31 @@ class Emission(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     asset_id = db.Column(db.Integer, db.ForeignKey("assets.id"), nullable=True)
     
-    # Enhanced emission source details
-    emission_type = db.Column(db.String(50), nullable=False, default="other")  # 'electricity', 'transport', 'food', 'other'
-    activity = db.Column(db.String(100))                      # e.g. 'car_trip', 'electricity_usage'
-    source = db.Column(db.String(100), nullable=False)        # e.g. "My Tesla Model 3"
+    emission_type = db.Column(db.String(50))  # transport, electricity, food, other
+    activity = db.Column(db.String(255))      # Description of activity
+    source = db.Column(db.String(100), nullable=False)
     
-    # Calculation details
-    original_value = db.Column(db.Float)                      # Original value (km, kWh, kg, etc.)
-    unit = db.Column(db.String(20), default="kg")             # 'km', 'kWh', 'kg'
-    amount = db.Column(db.Float, nullable=False)              # CO2 amount in kg
-    calculation_method = db.Column(db.String(50))             # 'standard', 'custom', 'asset_based'
-    emission_factor = db.Column(db.Float)                     # CO2 per unit (kg CO2 per km/kWh/etc.)
+    original_value = db.Column(db.Float, nullable=False)  # Original input value
+    unit = db.Column(db.String(20), default="kg CO₂")
+    amount = db.Column(db.Float, nullable=False)  # Calculated CO2 amount
     
-    date = db.Column(db.Date, nullable=False, default=datetime.utcnow)  # Changed to Date for better grouping
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    calculation_method = db.Column(db.String(50))  # How it was calculated
+    emission_factor = db.Column(db.Float)          # Factor used in calculation
+    
+    date = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
         return {
             'id': self.id,
-            'emission_type': self.emission_type,
-            'activity': self.activity,
             'source': self.source,
-            'original_value': float(self.original_value) if self.original_value else None,
-            'unit': self.unit,
+            'emission_type': self.emission_type,
             'amount': float(self.amount),
-            'calculation_method': self.calculation_method,
-            'emission_factor': float(self.emission_factor) if self.emission_factor else None,
-            'date': self.date.isoformat() if self.date else None,
-            'created_at': self.created_at.isoformat() if self.created_at else None
+            'unit': self.unit,
+            'date': self.date.strftime('%b %d, %Y') if self.date else None
         }
 
     def __repr__(self):
-        return f"<Emission {self.amount} kg CO₂ from {self.source}>"
-
+        return f"<Emission {self.amount} {self.unit} from {self.source}>"
 
 class Activity(db.Model):
     __tablename__ = "activities"
