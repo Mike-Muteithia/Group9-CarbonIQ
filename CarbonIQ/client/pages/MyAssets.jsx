@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import AddAssetForm from '../components/AddAssetForm';
-import Image16 from "../assets/Image16.png";
-import movingImage from "../assets/moving.png";
+
 
 export default function MyAssetsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);

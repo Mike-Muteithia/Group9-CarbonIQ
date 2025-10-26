@@ -1,8 +1,9 @@
 
 from flask import Blueprint, jsonify, request
-from models import db, User, Asset, Emission, Activity, Goal
+from models import db, User, Asset, Emission, Activity, Goal, MonthlySummary
 from sqlalchemy import func
 from datetime import datetime, timedelta
+from emissionservice import EmissionService
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -320,3 +321,217 @@ def seed_data(user_id):
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
     
+
+@api.route('/emissions/record', methods=['POST'])
+def record_emission():
+    """Record a new emission with automatic calculation"""
+    try:
+        data = request.get_json()
+        
+        required_fields = ['user_id', 'original_value', 'emission_type']
+        if not all(field in data for field in required_fields):
+            return jsonify({'error': 'Missing required fields'}), 400
+        
+        emission = EmissionService.record_emission(
+            user_id=data['user_id'],
+            emission_data=data
+        )
+        
+        return jsonify({
+            'message': 'Emission recorded successfully',
+            'emission': emission.to_dict(),
+            'calculated_co2': emission.amount
+        }), 201
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@api.route('/emissions/user/<int:user_id>')
+def get_user_emissions(user_id):
+    """Get user's emission history with pagination"""
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 20, type=int)
+        
+        emissions = Emission.query.filter_by(user_id=user_id)\
+            .order_by(Emission.date.desc())\
+            .paginate(page=page, per_page=per_page, error_out=False)
+        
+        return jsonify({
+            'emissions': [e.to_dict() for e in emissions.items],
+            'total': emissions.total,
+            'pages': emissions.pages,
+            'current_page': page
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@api.route('/dashboard/enhanced-stats/<int:user_id>', methods=['GET'])
+def get_enhanced_dashboard_stats(user_id):
+    """
+    Enhanced dashboard stats with monthly comparisons and categories
+    """
+    try:
+        stats = EmissionService.get_dashboard_stats(user_id)
+        return jsonify(stats)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@api.route('/emissions/categories/<int:user_id>', methods=['GET'])
+def get_emission_categories(user_id):
+    """Get emissions broken down by category for current month"""
+    try:
+        current_date = datetime.now()
+        summary = MonthlySummary.query.filter_by(
+            user_id=user_id,
+            year=current_date.year,
+            month=current_date.month
+        ).first()
+        
+        if not summary:
+            return jsonify({
+                'electricity': 0,
+                'transport': 0,
+                'food': 0,
+                'other': 0
+            }), 200
+        
+        return jsonify({
+            'electricity': round(summary.electricity_emissions, 2),
+            'transport': round(summary.transport_emissions, 2),
+            'food': round(summary.food_emissions, 2),
+            'other': round(summary.other_emissions, 2)
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+@api.route('/dashboard/stats/<int:user_id>', methods=['GET'])
+def get_dashboard_stats(user_id):
+    """
+    Get statistics for the 4 cards at the top of dashboard - ENHANCED VERSION
+    Now includes monthly comparison data
+    """
+    try:
+        # Get enhanced stats from EmissionService
+        enhanced_stats = EmissionService.get_dashboard_stats(user_id)
+        
+        # Keep your existing calculations for compatibility
+        total_emission = db.session.query(func.sum(Emission.amount)).filter_by(user_id=user_id).scalar() or 0
+        
+        # This Month Emission (from enhanced stats)
+        this_month = enhanced_stats['total_emissions']
+        
+        # Activities Logged (this month)
+        first_day_of_month = datetime.utcnow().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+        activities_count = Activity.query.filter(
+            Activity.user_id == user_id,
+            Activity.date >= first_day_of_month
+        ).count()
+        
+        # Active Goals
+        active_goals = Goal.query.filter_by(user_id=user_id, status='active').count()
+        
+        return jsonify({
+            'totalEmission': round(total_emission, 2),
+            'thisMonth': round(this_month, 2),
+            'activitiesLogged': activities_count,
+            'activeGoals': active_goals,
+            # Add enhanced data for your metrics card
+            'enhancedData': {
+                'change_percent': enhanced_stats['change_percent'],
+                'change_type': enhanced_stats['change_type'],
+                'period': enhanced_stats['period'],
+                'message': enhanced_stats['message'],
+                'category_breakdown': enhanced_stats['category_breakdown']
+            }
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+
+@api.route('/seed-emissions/<int:user_id>', methods=['POST'])
+def seed_emission_data(user_id):
+    """
+    Create sample emission data for testing (REMOVE IN PRODUCTION)
+    """
+    try:
+        sample_emissions = [
+            # Current month - transport
+            {
+                'user_id': user_id,
+                'emission_type': 'transport',
+                'original_value': 50,
+                'unit': 'km',
+                'source': 'Car commute',
+                'activity': 'Work travel',
+                'calculation_method': 'standard',
+                'calculation_params': {'vehicle_type': 'car'}
+            },
+            # Current month - electricity
+            {
+                'user_id': user_id,
+                'emission_type': 'electricity',
+                'original_value': 200,
+                'unit': 'kWh', 
+                'source': 'Home electricity',
+                'activity': 'Monthly usage',
+                'calculation_method': 'standard',
+                'calculation_params': {'energy_source': 'average'}
+            },
+            # Current month - food
+            {
+                'user_id': user_id,
+                'emission_type': 'food',
+                'original_value': 2.5,
+                'unit': 'kg',
+                'source': 'Beef consumption',
+                'activity': 'Weekly groceries',
+                'calculation_method': 'standard',
+                'calculation_params': {'food_type': 'beef'}
+            },
+            # Previous month data (for comparison)
+            {
+                'user_id': user_id,
+                'emission_type': 'transport', 
+                'original_value': 75,
+                'unit': 'km',
+                'source': 'Car commute',
+                'activity': 'Work travel',
+                'calculation_method': 'standard',
+                'calculation_params': {'vehicle_type': 'car'},
+                'date': (datetime.now() - timedelta(days=35)).date()
+            },
+            {
+                'user_id': user_id,
+                'emission_type': 'electricity',
+                'original_value': 250,
+                'unit': 'kWh',
+                'source': 'Home electricity', 
+                'activity': 'Monthly usage',
+                'calculation_method': 'standard',
+                'calculation_params': {'energy_source': 'average'},
+                'date': (datetime.now() - timedelta(days=35)).date()
+            }
+        ]
+        
+        created_emissions = []
+        for emission_data in sample_emissions:
+            emission = EmissionService.record_emission(user_id, emission_data)
+            created_emissions.append(emission.to_dict())
+        
+        return jsonify({
+            'message': 'Sample emission data created successfully!',
+            'emissions_created': len(created_emissions),
+            'emissions': created_emissions
+        }), 201
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500    
