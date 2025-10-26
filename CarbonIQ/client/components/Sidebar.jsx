@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, Activity, Bot, Target } from 'lucide-react';
 import logo from '../assets/Logo.png';
-import MetricsCard from './components/MetricsCard'; // Import MetricsCard
+import MetricsCard from './MetricsCard'; // Import MetricsCard
 
 const Sidebar = () => {
   const location = useLocation();
