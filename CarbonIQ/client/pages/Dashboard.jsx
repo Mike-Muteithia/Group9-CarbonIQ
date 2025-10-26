@@ -1,6 +1,10 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
-// import leafImage from "../assets/leaf.png";
+import leafImage from "../assets/leaf.png";
+import movingImage from "../assets/moving.png";
+import vitalImage from "../assets/vital.png";
+import targetImage from "../assets/target.png";
+
 
 
 
@@ -94,8 +98,8 @@ export default function CarbonIQDashboard() {
                 <p className="text-xs text-red-500 mt-1">+0.5kg 11.5%</p>
               </div>
               <div className="bg-green-100 p-2 rounded-lg">
-                <span className="text-2xl"></span>
-              </div>
+             <img src={leafImage} alt="Leaf" className="w-8 h-8" />
+             </div>
             </div>
           </div>
 
@@ -107,9 +111,9 @@ export default function CarbonIQDashboard() {
                 <p className="text-3xl font-bold text-gray-900">0.00 kg</p>
                 <p className="text-xs text-gray-500 mt-1">-0% vs last month</p>
               </div>
-              <div className="bg-orange-100 p-2 rounded-lg">
-                <span className="text-2xl">📈</span>
-              </div>
+               <div className="bg-green-100 p-2 rounded-lg">
+             <img src={movingImage} alt="Leaf" className="w-8 h-8" />
+             </div>
             </div>
           </div>
 
@@ -121,9 +125,9 @@ export default function CarbonIQDashboard() {
                 <p className="text-3xl font-bold text-gray-900">4</p>
                 <p className="text-xs text-gray-500 mt-1">In this month</p>
               </div>
-              <div className="bg-blue-100 p-2 rounded-lg">
-                <span className="text-2xl">📊</span>
-              </div>
+              <div className="bg-green-100 p-2 rounded-lg">
+             <img src={vitalImage} alt="Leaf" className="w-8 h-8" />
+             </div>
             </div>
           </div>
 
@@ -134,11 +138,10 @@ export default function CarbonIQDashboard() {
                 <p className="text-3xl font-bold text-gray-900">2</p>
                 <p className="text-xs text-gray-500 mt-1">Reduction targets</p>
               </div>
-              <div className="bg-purple-100 p-2 rounded-lg">
-                <span className="text-2xl">🎯</span>
-              </div>
-            </div>
-          </div>
+              <div className="bg-green-100 p-2 rounded-lg">
+             <img src={targetImage} alt="Leaf" className="w-8 h-8" />
+             </div>
+            </div>         </div>
         </div>
 
         
