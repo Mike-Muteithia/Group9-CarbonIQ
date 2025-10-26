@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify, request
 from models import db, User, Asset, Emission, Activity, Goal, MonthlySummary
 from sqlalchemy import func
 from datetime import datetime, timedelta
-from emissionservice import EmissionService
+from emissionsservice import EmissionService
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
