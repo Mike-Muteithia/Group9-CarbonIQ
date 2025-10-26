@@ -19,6 +19,7 @@ class User(db.Model):
     emissions = db.relationship("Emission", backref="user", lazy=True, cascade="all, delete-orphan")
     activities = db.relationship("Activity", backref="user", lazy=True, cascade="all, delete-orphan")
     goals = db.relationship("Goal", backref="user", lazy=True, cascade="all, delete-orphan")
+    monthly_summaries = db.relationship("MonthlySummary", backref="user", lazy=True, cascade="all, delete-orphan")
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -36,8 +37,6 @@ class User(db.Model):
 
     def __repr__(self):
         return f"<User {self.email}>"
-
-
 
 
 class Asset(db.Model):
@@ -81,23 +80,39 @@ class Emission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     asset_id = db.Column(db.Integer, db.ForeignKey("assets.id"), nullable=True)
+    
+    # Enhanced emission source details
+    emission_type = db.Column(db.String(50), nullable=False, default="other")  # 'electricity', 'transport', 'food', 'other'
+    activity = db.Column(db.String(100))                      # e.g. 'car_trip', 'electricity_usage'
     source = db.Column(db.String(100), nullable=False)        # e.g. "My Tesla Model 3"
-    amount = db.Column(db.Float, nullable=False)              # CO2 amount
-    unit = db.Column(db.String(20), default="kg CO₂")
-    date = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    # Calculation details
+    original_value = db.Column(db.Float)                      # Original value (km, kWh, kg, etc.)
+    unit = db.Column(db.String(20), default="kg")             # 'km', 'kWh', 'kg'
+    amount = db.Column(db.Float, nullable=False)              # CO2 amount in kg
+    calculation_method = db.Column(db.String(50))             # 'standard', 'custom', 'asset_based'
+    emission_factor = db.Column(db.Float)                     # CO2 per unit (kg CO2 per km/kWh/etc.)
+    
+    date = db.Column(db.Date, nullable=False, default=datetime.utcnow)  # Changed to Date for better grouping
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
         return {
             'id': self.id,
+            'emission_type': self.emission_type,
+            'activity': self.activity,
             'source': self.source,
-            'amount': float(self.amount),
+            'original_value': float(self.original_value) if self.original_value else None,
             'unit': self.unit,
-            'date': self.date.strftime('%b %d, %Y') if self.date else None
+            'amount': float(self.amount),
+            'calculation_method': self.calculation_method,
+            'emission_factor': float(self.emission_factor) if self.emission_factor else None,
+            'date': self.date.isoformat() if self.date else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
     def __repr__(self):
-        return f"<Emission {self.amount} {self.unit} from {self.source}>"
-
+        return f"<Emission {self.amount} kg CO₂ from {self.source}>"
 
 
 class Activity(db.Model):
@@ -151,3 +166,48 @@ class Goal(db.Model):
 
     def __repr__(self):
         return f"<Goal {self.title} ({self.status})>"
+
+
+class MonthlySummary(db.Model):
+    """Store pre-calculated monthly data for faster dashboard queries"""
+    __tablename__ = "monthly_summaries"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    year = db.Column(db.Integer, nullable=False)
+    month = db.Column(db.Integer, nullable=False)  # 1-12
+    
+    # Calculated totals
+    total_emissions = db.Column(db.Float, default=0.0)
+    electricity_emissions = db.Column(db.Float, default=0.0)
+    transport_emissions = db.Column(db.Float, default=0.0)
+    food_emissions = db.Column(db.Float, default=0.0)
+    other_emissions = db.Column(db.Float, default=0.0)
+    
+    # Comparison data
+    previous_month_emissions = db.Column(db.Float, default=0.0)
+    percent_change = db.Column(db.Float, default=0.0)
+    
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Unique constraint - one summary per user per month
+    __table_args__ = (db.UniqueConstraint('user_id', 'year', 'month', name='unique_user_monthly_summary'),)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'year': self.year,
+            'month': self.month,
+            'total_emissions': float(self.total_emissions),
+            'electricity_emissions': float(self.electricity_emissions),
+            'transport_emissions': float(self.transport_emissions),
+            'food_emissions': float(self.food_emissions),
+            'other_emissions': float(self.other_emissions),
+            'previous_month_emissions': float(self.previous_month_emissions),
+            'percent_change': float(self.percent_change),
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None
+        }
+
+    def __repr__(self):
+        return f"<MonthlySummary {self.year}-{self.month}: {self.total_emissions} kg CO₂>"

@@ -66,7 +66,7 @@ const Sidebar = () => {
         <div className="mx-4 mb-4 bg-green-50 border border-green-100 rounded-lg px-4 py-3">
           <p className="text-xs text-gray-600 mb-1 font-medium">This Month</p>
           <p className="text-sm text-green-600 font-semibold">+12%</p>
-          <p className="text-xs text-green-700">You're reducing emissions! 🌿</p>
+          <p className="text-xs text-green-700">You're reducing emissions! </p>
         </div>
 
         {/* User Profile */}
