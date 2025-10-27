@@ -10,7 +10,7 @@ from app import app, db
 from models import User, Asset, Activity, Emission, Goal, MonthlySummary
 
 def seed_database():
-    """Seed the database with sample data"""
+    """Seed the database with sample data optimized for dashboard charts"""
     with app.app_context():
         try:
             print("🗑️  Clearing existing data...")
@@ -121,178 +121,189 @@ def seed_database():
             # Get assets for reference
             john_assets = Asset.query.filter_by(user_id=john.id).all()
             sarah_assets = Asset.query.filter_by(user_id=sarah.id).all()
+
+            # Create emissions data specifically formatted for the trend chart
+            print("📊 Creating emissions data for trend chart...")
             
-            # Create sample emissions with emission_type - Generate for last 30 days
-            print("🌫️  Creating sample emissions for the last 30 days...")
+            # Generate 30 days of emissions data for John
+            base_date = datetime.utcnow().replace(hour=12, minute=0, second=0, microsecond=0)
             emissions_data = []
             
-            # Generate emissions for John for the last 30 days
+            # John's emissions trend - starts high, shows improvement
             for day in range(30):
-                current_date = datetime.utcnow() - timedelta(days=30 - day)
+                date = base_date - timedelta(days=29 - day)  # Last 30 days
                 
-                # Skip some days to make it more realistic (not every day has emissions)
-                if random.random() < 0.7:  # 70% chance of having emissions on a given day
-                    # Base emissions with some randomness
-                    base_emission = random.uniform(10, 40)
-                    
-                    # Create 1-3 emissions per day
-                    num_emissions = random.randint(1, 3)
-                    for i in range(num_emissions):
-                        emission_type = random.choice(['machine', 'transport', 'electricity'])
-                        
-                        if emission_type == 'machine':
-                            asset = john_assets[0] if john_assets else None
-                            activity = 'Construction work'
-                            source = 'Excavator'
-                            original_value = random.uniform(50, 200)
-                            amount = base_emission * random.uniform(0.3, 0.7)
-                        elif emission_type == 'transport':
-                            asset = random.choice(john_assets[1:]) if len(john_assets) > 1 else None
-                            activity = random.choice(['Material delivery', 'Client meetings', 'Site visits'])
-                            source = asset.name if asset else 'Vehicle'
-                            original_value = random.uniform(30, 150)
-                            amount = base_emission * random.uniform(0.2, 0.5)
-                        else:  # electricity
-                            asset = None
-                            activity = 'Office electricity consumption'
-                            source = 'Office Electricity'
-                            original_value = random.uniform(200, 500)
-                            amount = base_emission * random.uniform(0.1, 0.3)
-                        
+                # Create a trend: high at start, decreasing over time
+                trend_factor = 1.0 - (day / 30) * 0.4  # 40% reduction over period
+                daily_total = random.uniform(25, 40) * trend_factor
+                
+                # Split into multiple emissions per day
+                num_emissions = random.randint(2, 4)
+                for i in range(num_emissions):
+                    if i == 0:  # Machine emission
                         emissions_data.append({
                             'user_id': john.id,
-                            'asset_id': asset.id if asset else None,
-                            'emission_type': emission_type,
-                            'activity': activity,
-                            'source': source,
-                            'original_value': round(original_value, 2),
-                            'unit': 'liters' if emission_type == 'machine' else 'km' if emission_type == 'transport' else 'kWh',
-                            'amount': round(amount, 2),
+                            'asset_id': john_assets[0].id,
+                            'emission_type': 'machine',
+                            'activity': f'Construction work day {day+1}',
+                            'source': 'Excavator',
+                            'original_value': round(random.uniform(80, 150), 2),
+                            'unit': 'liters',
+                            'amount': round(daily_total * 0.5, 2),
                             'calculation_method': 'standard',
-                            'emission_factor': round(random.uniform(0.1, 0.3), 3),
-                            'date': current_date
+                            'emission_factor': 0.214,
+                            'date': date
                         })
-            
-            # Generate emissions for Sarah for the last 30 days
+                    elif i == 1:  # Transport emission
+                        emissions_data.append({
+                            'user_id': john.id,
+                            'asset_id': john_assets[1].id,
+                            'emission_type': 'transport',
+                            'activity': f'Material delivery day {day+1}',
+                            'source': 'Work Truck',
+                            'original_value': round(random.uniform(50, 120), 2),
+                            'unit': 'km',
+                            'amount': round(daily_total * 0.3, 2),
+                            'calculation_method': 'standard',
+                            'emission_factor': 0.285,
+                            'date': date
+                        })
+                    else:  # Other emissions
+                        emissions_data.append({
+                            'user_id': john.id,
+                            'emission_type': 'electricity',
+                            'activity': f'Office operations day {day+1}',
+                            'source': 'Office Electricity',
+                            'original_value': round(random.uniform(200, 400), 2),
+                            'unit': 'kWh',
+                            'amount': round(daily_total * 0.2, 2),
+                            'calculation_method': 'standard',
+                            'emission_factor': 0.13,
+                            'date': date
+                        })
+
+            # Sarah's emissions trend - lower and more stable
             for day in range(30):
-                current_date = datetime.utcnow() - timedelta(days=30 - day)
+                date = base_date - timedelta(days=29 - day)
                 
-                # Sarah has emissions less frequently (more eco-conscious)
-                if random.random() < 0.5:  # 50% chance of having emissions
-                    base_emission = random.uniform(5, 25)
-                    
-                    num_emissions = random.randint(1, 2)
-                    for i in range(num_emissions):
-                        emission_type = random.choice(['transport', 'electricity'])
-                        
-                        if emission_type == 'transport':
-                            # Sarah's Tesla has zero emissions
-                            if random.random() < 0.3:  # 30% chance of using Tesla
-                                asset = sarah_assets[0] if sarah_assets else None
-                                activity = 'Commute to office'
-                                source = 'Tesla'
-                                original_value = random.uniform(20, 80)
-                                amount = 0.0  # Electric vehicle
-                            else:
-                                asset = sarah_assets[1] if len(sarah_assets) > 1 else None
-                                activity = random.choice(['Business trip', 'Generator usage'])
-                                source = 'Generator' if asset else 'Business Travel'
-                                original_value = random.uniform(10, 50)
-                                amount = base_emission * random.uniform(0.4, 0.8)
-                        else:  # electricity
-                            asset = sarah_assets[1] if len(sarah_assets) > 1 else None
-                            activity = 'Office operations'
-                            source = 'Generator' if asset and random.random() < 0.4 else 'Grid Electricity'
-                            original_value = random.uniform(100, 300)
-                            amount = base_emission * random.uniform(0.2, 0.6)
-                        
+                # Sarah has lower, more stable emissions
+                daily_total = random.uniform(8, 20)
+                
+                num_emissions = random.randint(1, 3)
+                for i in range(num_emissions):
+                    if i == 0 and random.random() < 0.7:  # Electric vehicle (zero emissions)
                         emissions_data.append({
                             'user_id': sarah.id,
-                            'asset_id': asset.id if asset else None,
-                            'emission_type': emission_type,
-                            'activity': activity,
-                            'source': source,
-                            'original_value': round(original_value, 2),
-                            'unit': 'km' if emission_type == 'transport' else 'kWh',
-                            'amount': round(amount, 2),
-                            'calculation_method': 'electric' if source == 'Tesla' else 'standard',
-                            'emission_factor': 0.0 if source == 'Tesla' else round(random.uniform(0.1, 0.25), 3),
-                            'date': current_date
+                            'asset_id': sarah_assets[0].id,
+                            'emission_type': 'transport',
+                            'activity': f'Daily commute day {day+1}',
+                            'source': 'Tesla',
+                            'original_value': round(random.uniform(30, 80), 2),
+                            'unit': 'km',
+                            'amount': 0.0,
+                            'calculation_method': 'electric',
+                            'emission_factor': 0.0,
+                            'date': date
                         })
-            
-            # Add the emissions to the database
+                    elif i == 1:  # Generator usage
+                        emissions_data.append({
+                            'user_id': sarah.id,
+                            'asset_id': sarah_assets[1].id,
+                            'emission_type': 'electricity',
+                            'activity': f'Backup power day {day+1}',
+                            'source': 'Generator',
+                            'original_value': round(random.uniform(10, 40), 2),
+                            'unit': 'liters',
+                            'amount': round(daily_total * 0.8, 2),
+                            'calculation_method': 'standard',
+                            'emission_factor': 1.812,
+                            'date': date
+                        })
+                    else:  # Other
+                        emissions_data.append({
+                            'user_id': sarah.id,
+                            'emission_type': 'transport',
+                            'activity': f'Business travel day {day+1}',
+                            'source': 'Business Travel',
+                            'original_value': round(random.uniform(50, 150), 2),
+                            'unit': 'km',
+                            'amount': round(daily_total * 0.2, 2),
+                            'calculation_method': 'standard',
+                            'emission_factor': 0.086,
+                            'date': date
+                        })
+
+            # Add all emissions to database
             for emission_data in emissions_data:
                 emission = Emission(**emission_data)
                 db.session.add(emission)
             
             db.session.commit()
-            print(f"✅ Created {len(emissions_data)} emissions over the last 30 days")
-            
-            # Create sample activities (recent ones for dashboard)
-            print("📊 Creating sample activities...")
+            print(f"✅ Created {len(emissions_data)} emissions entries")
+
+            # Create recent activities for dashboard
+            print("📝 Creating recent activities...")
             activities_data = []
             
-            # Create activities for the last 7 days for both users
+            # Create activities for last 7 days
             for day in range(7):
-                current_date = datetime.utcnow() - timedelta(days=6 - day)
+                date = base_date - timedelta(days=6 - day)
                 
-                # John's recent activities
-                if random.random() < 0.8:
-                    activities_data.append({
-                        'user_id': john.id,
-                        'title': 'Excavator X300',
-                        'location': 'Construction Site A',
-                        'amount': round(random.uniform(15, 35), 2),
-                        'unit': 'kg CO₂',
-                        'badge': 'machine',
-                        'icon': '🏗️',
-                        'date': current_date
-                    })
+                # John's activities
+                activities_data.append({
+                    'user_id': john.id,
+                    'title': 'Excavator X300',
+                    'location': 'Downtown Construction Site',
+                    'amount': round(random.uniform(15, 35), 2),
+                    'unit': 'kg CO₂',
+                    'badge': 'machine',
+                    'icon': '🏗️',
+                    'date': date
+                })
                 
-                if random.random() < 0.6:
+                if day % 2 == 0:  # Every other day
                     activities_data.append({
                         'user_id': john.id,
                         'title': 'Work Truck',
-                        'location': 'Material delivery',
+                        'location': 'Material Delivery Route',
                         'amount': round(random.uniform(10, 25), 2),
                         'unit': 'kg CO₂',
                         'badge': 'vehicle',
                         'icon': '🚚',
-                        'date': current_date
+                        'date': date
                     })
                 
-                # Sarah's recent activities
-                if random.random() < 0.5:
-                    if random.random() < 0.4:  # Tesla (zero emissions)
-                        activities_data.append({
-                            'user_id': sarah.id,
-                            'title': 'My Tesla Model 3',
-                            'location': 'Office commute',
-                            'amount': 0.0,
-                            'unit': 'kg CO₂',
-                            'badge': 'vehicle',
-                            'icon': '🚗',
-                            'date': current_date
-                        })
-                    else:  # Generator
-                        activities_data.append({
-                            'user_id': sarah.id,
-                            'title': 'Office Generator',
-                            'location': 'Backup power',
-                            'amount': round(random.uniform(20, 50), 2),
-                            'unit': 'kg CO₂',
-                            'badge': 'machine',
-                            'icon': '⚡',
-                            'date': current_date
-                        })
-            
+                # Sarah's activities
+                if day % 3 == 0:  # Every 3 days
+                    activities_data.append({
+                        'user_id': sarah.id,
+                        'title': 'Office Generator',
+                        'location': 'Backup Power Usage',
+                        'amount': round(random.uniform(20, 45), 2),
+                        'unit': 'kg CO₂',
+                        'badge': 'machine',
+                        'icon': '⚡',
+                        'date': date
+                    })
+                
+                activities_data.append({
+                    'user_id': sarah.id,
+                    'title': 'My Tesla Model 3',
+                    'location': 'Daily Commute',
+                    'amount': 0.0,
+                    'unit': 'kg CO₂',
+                    'badge': 'vehicle',
+                    'icon': '🚗',
+                    'date': date
+                })
+
             for activity_data in activities_data:
                 activity = Activity(**activity_data)
                 db.session.add(activity)
             
             db.session.commit()
-            print(f"✅ Created {len(activities_data)} recent activities")
-            
+            print(f"✅ Created {len(activities_data)} activities")
+
             # Create sample goals
             print("🎯 Creating sample goals...")
             goals_data = [
@@ -316,13 +327,6 @@ def seed_database():
                     'target_reduction_percentage': 100,
                     'status': 'active',
                     'end_date': datetime.utcnow() + timedelta(days=365)
-                },
-                {
-                    'user_id': sarah.id,
-                    'title': 'Reduce generator usage by 50%',
-                    'target_reduction_percentage': 50,
-                    'status': 'completed',
-                    'end_date': datetime.utcnow() - timedelta(days=30)
                 }
             ]
             
@@ -332,58 +336,44 @@ def seed_database():
             
             db.session.commit()
             print(f"✅ Created {len(goals_data)} goals")
-            
-            # Create monthly summaries
+
+            # Create monthly summaries with calculated data
             print("📈 Creating monthly summaries...")
             current_date = datetime.utcnow()
             
-            # Calculate actual totals from emissions data
-            john_current_month_emissions = sum([e.amount for e in Emission.query.filter(
+            # Calculate actual totals for current month
+            john_current_emissions = sum([e.amount for e in Emission.query.filter(
                 Emission.user_id == john.id,
                 Emission.date >= current_date.replace(day=1)
             ).all()])
             
-            john_prev_month_emissions = sum([e.amount for e in Emission.query.filter(
-                Emission.user_id == john.id,
-                Emission.date >= (current_date.replace(day=1) - timedelta(days=30)),
-                Emission.date < current_date.replace(day=1)
-            ).all()])
-            
-            sarah_current_month_emissions = sum([e.amount for e in Emission.query.filter(
+            sarah_current_emissions = sum([e.amount for e in Emission.query.filter(
                 Emission.user_id == sarah.id,
                 Emission.date >= current_date.replace(day=1)
-            ).all()])
-            
-            sarah_prev_month_emissions = sum([e.amount for e in Emission.query.filter(
-                Emission.user_id == sarah.id,
-                Emission.date >= (current_date.replace(day=1) - timedelta(days=30)),
-                Emission.date < current_date.replace(day=1)
             ).all()])
             
             monthly_summaries = [
-                # Current month for John
                 {
                     'user_id': john.id,
                     'year': current_date.year,
                     'month': current_date.month,
-                    'total_emissions': round(john_current_month_emissions, 2),
-                    'previous_month_emissions': round(john_prev_month_emissions, 2),
-                    'percent_change': round(((john_current_month_emissions - john_prev_month_emissions) / john_prev_month_emissions * 100) if john_prev_month_emissions > 0 else 0, 1),
-                    'electricity_emissions': round(john_current_month_emissions * 0.3, 2),
-                    'transport_emissions': round(john_current_month_emissions * 0.4, 2),
+                    'total_emissions': round(john_current_emissions, 2),
+                    'previous_month_emissions': round(john_current_emissions * 1.2, 2),  # 20% higher last month
+                    'percent_change': -16.7,
+                    'electricity_emissions': round(john_current_emissions * 0.3, 2),
+                    'transport_emissions': round(john_current_emissions * 0.4, 2),
                     'food_emissions': 0.0,
-                    'other_emissions': round(john_current_month_emissions * 0.3, 2)
+                    'other_emissions': round(john_current_emissions * 0.3, 2)
                 },
-                # Current month for Sarah
                 {
                     'user_id': sarah.id,
                     'year': current_date.year,
                     'month': current_date.month,
-                    'total_emissions': round(sarah_current_month_emissions, 2),
-                    'previous_month_emissions': round(sarah_prev_month_emissions, 2),
-                    'percent_change': round(((sarah_current_month_emissions - sarah_prev_month_emissions) / sarah_prev_month_emissions * 100) if sarah_prev_month_emissions > 0 else 0, 1),
-                    'electricity_emissions': round(sarah_current_month_emissions * 0.6, 2),
-                    'transport_emissions': round(sarah_current_month_emissions * 0.4, 2),
+                    'total_emissions': round(sarah_current_emissions, 2),
+                    'previous_month_emissions': round(sarah_current_emissions * 0.9, 2),  # 10% lower last month
+                    'percent_change': 11.1,
+                    'electricity_emissions': round(sarah_current_emissions * 0.6, 2),
+                    'transport_emissions': round(sarah_current_emissions * 0.4, 2),
                     'food_emissions': 0.0,
                     'other_emissions': 0.0
                 }
@@ -395,8 +385,8 @@ def seed_database():
             
             db.session.commit()
             print(f"✅ Created {len(monthly_summaries)} monthly summaries")
-            
-            # Print summary
+
+            # Print debug information
             print("\n" + "="*50)
             print("🎉 DATABASE SEEDING COMPLETE!")
             print("="*50)
@@ -406,13 +396,15 @@ def seed_database():
             print(f"🌫️  Emissions: {Emission.query.count()}")
             print(f"🎯 Goals: {Goal.query.count()}")
             print(f"📈 Monthly Summaries: {MonthlySummary.query.count()}")
-            print("\n📝 Sample User IDs for testing:")
-            print(f"   John Doe: {john.id}")
-            print(f"   Sarah Connor: {sarah.id}")
-            print("\n📊 Emissions data generated for the last 30 days")
-            print("🔑 Default password for all users: password123")
-            print("\n🚀 You can now start the server with: python app.py")
             
+            # Show sample emissions data for debugging
+            john_emissions = Emission.query.filter_by(user_id=john.id).order_by(Emission.date.asc()).all()
+            print(f"\n📅 John's emissions date range: {john_emissions[0].date if john_emissions else 'None'} to {john_emissions[-1].date if john_emissions else 'None'}")
+            print(f"📊 John's total emissions: {sum(e.amount for e in john_emissions):.2f} kg")
+            
+            print(f"\n🔑 Default password for all users: password123")
+            print("🚀 You can now start the server and check the dashboard!")
+
         except Exception as e:
             db.session.rollback()
             print(f"❌ Error seeding database: {str(e)}")
