@@ -38,7 +38,7 @@ const Sidebar = () => {
               const isActive = location.pathname === item.path;
               
               return (
-                <li key={item.name}>
+                <li key={item.name} className="hover:scale-105 transition-transform duration-300">
                   <Link
                     to={item.path}
                     onClick={() => setActiveItem(item.name)}

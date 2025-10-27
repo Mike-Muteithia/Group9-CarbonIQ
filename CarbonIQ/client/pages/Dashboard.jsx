@@ -120,7 +120,7 @@ export default function CarbonIQDashboard() {
 
         {/* Stats Cards - Now using real data */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Emission</p>
@@ -133,7 +133,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">This Month</p>
@@ -146,7 +146,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Activities Logged</p>
@@ -159,7 +159,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Active Goals</p>
@@ -176,7 +176,7 @@ export default function CarbonIQDashboard() {
         {/* Charts Section */}
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
           {/* Emissions Trend Chart */}
-          <div className="flex-[2] bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="flex-[2] bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Emissions Trend (Last 30 Days)
             </h2>
@@ -221,7 +221,7 @@ export default function CarbonIQDashboard() {
           </div>
 
           {/* Top Emitters Pie Chart */}
-          <div className="flex-1 bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="flex-1 bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <h2 className="text-lg font-semibold text-gray-900 mb-6">Top Emitters</h2>
             {topEmittersData.length > 0 ? (
               <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
@@ -268,7 +268,7 @@ export default function CarbonIQDashboard() {
         </div>
 
         {/* Recent Activities */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activities</h2>
           {recentActivities.length > 0 ? (
             <div className="space-y-4">
