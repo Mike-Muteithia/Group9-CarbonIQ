@@ -794,3 +794,248 @@ def debug_emissions(user_id):
         })
     
     return jsonify(debug_info)
+# METRICS ROUTES - Add to your existing api blueprint
+
+# GET USER METRICS - /api/users/:userId/metrics
+@api.route('/users/<int:user_id>/metrics', methods=['GET'])
+def get_user_metrics(user_id):
+    """
+    Get monthly metrics for a specific user
+    Returns enhanced data for metrics card
+    """
+    try:
+        print(f"📊 Fetching user metrics for user {user_id}")
+        
+        # Check if user exists
+        user = User.query.get(user_id)
+        if not user:
+            print(f"❌ User {user_id} not found")
+            return jsonify({'error': 'User not found'}), 404
+
+        # Calculate current month emissions
+        current_month = datetime.utcnow().month
+        current_year = datetime.utcnow().year
+        
+        current_month_data = db.session.query(func.sum(Emission.amount)).filter(
+            Emission.user_id == user_id,
+            func.extract('month', Emission.date) == current_month,
+            func.extract('year', Emission.date) == current_year
+        ).scalar() or 0
+
+        # Calculate previous month emissions
+        previous_month = current_month - 1 if current_month > 1 else 12
+        previous_year = current_year if current_month > 1 else current_year - 1
+        
+        previous_month_data = db.session.query(func.sum(Emission.amount)).filter(
+            Emission.user_id == user_id,
+            func.extract('month', Emission.date) == previous_month,
+            func.extract('year', Emission.date) == previous_year
+        ).scalar() or 0
+
+        current_emissions = float(current_month_data)
+        previous_emissions = float(previous_month_data)
+
+        # Calculate percentage change
+        change_percent = 0
+        change_type = 'neutral'
+        
+        if previous_emissions > 0:
+            change_percent = ((current_emissions - previous_emissions) / previous_emissions) * 100
+            change_type = 'increase' if change_percent > 0 else 'decrease'
+        elif current_emissions > 0:
+            change_percent = 100
+            change_type = 'increase'
+
+        # Generate message based on change
+        if change_type == 'increase':
+            message = f"Increased by {abs(change_percent):.1f}% from last month"
+        elif change_type == 'decrease':
+            message = f"Reduced by {abs(change_percent):.1f}% from last month"
+        else:
+            message = "Stable emissions this month"
+
+        metrics = {
+            'period': "This Month",
+            'change_type': change_type,
+            'change_percent': round(abs(change_percent), 1),
+            'message': message,
+            'total_emissions': round(current_emissions, 2),
+            'previous_emissions': round(previous_emissions, 2),
+            'comparison_period': f"{datetime(previous_year, previous_month, 1).strftime('%B %Y')}",
+            'updated_at': datetime.utcnow().isoformat()
+        }
+
+        print(f"✅ User metrics calculated: {metrics}")
+        return jsonify({
+            'success': True,
+            'enhancedData': metrics
+        }), 200
+
+    except Exception as e:
+        print(f"❌ Error in user metrics: {str(e)}")
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+# GET MONTHLY METRICS - /api/metrics/monthly?user_id=:userId
+@api.route('/metrics/monthly', methods=['GET'])
+def get_monthly_metrics():
+    """
+    Get detailed monthly metrics with category breakdown
+    """
+    try:
+        user_id = request.args.get('user_id', type=int)
+        
+        if not user_id:
+            return jsonify({'error': 'user_id query parameter is required'}), 400
+
+        print(f"📊 Fetching monthly metrics for user {user_id}")
+        
+        # Check if user exists
+        user = User.query.get(user_id)
+        if not user:
+            print(f"❌ User {user_id} not found")
+            return jsonify({'error': 'User not found'}), 404
+
+        # Current month data
+        current_month = datetime.utcnow().month
+        current_year = datetime.utcnow().year
+        
+        # Total emissions for current month
+        monthly_total = db.session.query(func.sum(Emission.amount)).filter(
+            Emission.user_id == user_id,
+            func.extract('month', Emission.date) == current_month,
+            func.extract('year', Emission.date) == current_year
+        ).scalar() or 0
+
+        # Activity count for current month
+        activity_count = Activity.query.filter(
+            Activity.user_id == user_id,
+            func.extract('month', Activity.date) == current_month,
+            func.extract('year', Activity.date) == current_year
+        ).count()
+
+        # Category breakdown
+        categories = db.session.query(
+            Emission.emission_type,
+            func.sum(Emission.amount).label('total_emissions'),
+            func.count(Emission.id).label('activity_count')
+        ).filter(
+            Emission.user_id == user_id,
+            func.extract('month', Emission.date) == current_month,
+            func.extract('year', Emission.date) == current_year
+        ).group_by(Emission.emission_type).all()
+
+        category_data = []
+        for cat in categories:
+            category_data.append({
+                'name': cat.emission_type or 'uncategorized',
+                'emissions': round(float(cat.total_emissions), 2),
+                'activities': cat.activity_count
+            })
+
+        metrics = {
+            'period': f"{datetime(current_year, current_month, 1).strftime('%B %Y')}",
+            'total_emissions': round(float(monthly_total), 2),
+            'activity_count': activity_count,
+            'average_per_activity': round(float(monthly_total) / activity_count, 2) if activity_count > 0 else 0,
+            'categories': category_data,
+            'updated_at': datetime.utcnow().isoformat()
+        }
+
+        print(f"✅ Monthly metrics calculated: {metrics}")
+        return jsonify({
+            'success': True,
+            'monthlyData': metrics
+        }), 200
+
+    except Exception as e:
+        print(f"❌ Error in monthly metrics: {str(e)}")
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+# GET DASHBOARD METRICS - /api/dashboard/metrics/:userId
+@api.route('/dashboard/metrics/<int:user_id>', methods=['GET'])
+def get_dashboard_metrics(user_id):
+    """
+    Get comprehensive dashboard metrics for the metrics card
+    """
+    try:
+        print(f"📊 Fetching dashboard metrics for user {user_id}")
+        
+        # Check if user exists
+        user = User.query.get(user_id)
+        if not user:
+            print(f"❌ User {user_id} not found")
+            return jsonify({'error': 'User not found'}), 404
+
+        # Current month data
+        current_month = datetime.utcnow().month
+        current_year = datetime.utcnow().year
+        
+        current_data = db.session.query(func.sum(Emission.amount)).filter(
+            Emission.user_id == user_id,
+            func.extract('month', Emission.date) == current_month,
+            func.extract('year', Emission.date) == current_year
+        ).scalar() or 0
+
+        # Previous month data
+        previous_month = current_month - 1 if current_month > 1 else 12
+        previous_year = current_year if current_month > 1 else current_year - 1
+        
+        previous_data = db.session.query(func.sum(Emission.amount)).filter(
+            Emission.user_id == user_id,
+            func.extract('month', Emission.date) == previous_month,
+            func.extract('year', Emission.date) == previous_year
+        ).scalar() or 0
+
+        # Year-to-date data
+        ytd_data = db.session.query(func.sum(Emission.amount)).filter(
+            Emission.user_id == user_id,
+            func.extract('year', Emission.date) == current_year
+        ).scalar() or 0
+
+        current_emissions = float(current_data)
+        previous_emissions = float(previous_data)
+        ytd_emissions = float(ytd_data)
+
+        # Calculate monthly change
+        change_percent = 0
+        change_type = 'neutral'
+        
+        if previous_emissions > 0:
+            change_percent = ((current_emissions - previous_emissions) / previous_emissions) * 100
+            change_type = 'increase' if change_percent > 0 else 'decrease'
+        elif current_emissions > 0:
+            change_percent = 100
+            change_type = 'increase'
+
+        # Generate appropriate message
+        if change_type == 'increase':
+            message = f"Emissions increased by {abs(change_percent):.1f}% compared to last month"
+        elif change_type == 'decrease':
+            message = f"Great! Emissions reduced by {abs(change_percent):.1f}% compared to last month"
+        else:
+            message = "Emissions are stable this month"
+
+        metrics = {
+            'period': "This Month",
+            'change_type': change_type,
+            'change_percent': round(abs(change_percent), 1),
+            'message': message,
+            'current_emissions': round(current_emissions, 2),
+            'previous_emissions': round(previous_emissions, 2),
+            'ytd_emissions': round(ytd_emissions, 2),
+            'comparison_period': f"{datetime(previous_year, previous_month, 1).strftime('%B %Y')}",
+            'updated_at': datetime.utcnow().isoformat()
+        }
+
+        print(f"✅ Dashboard metrics calculated: {metrics}")
+        return jsonify({
+            'success': True,
+            'metrics': metrics
+        }), 200
+
+    except Exception as e:
+        print(f"❌ Error in dashboard metrics: {str(e)}")
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
