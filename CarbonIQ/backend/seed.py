@@ -1,7 +1,6 @@
 import os
 import sys
 from datetime import datetime, timedelta
-from sqlalchemy import func
 
 # Add the current directory to Python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -30,28 +29,26 @@ def seed_database():
             print("👥 Creating sample users...")
             users = [
                 User(
-                    username='john_doe',
+                    name='John Doe',
                     email='john.doe@example.com',
-                    company_name='Construction Co',
-                    industry='Construction'
                 ),
                 User(
-                    username='sarah_connor',
-                    email='sarah.connor@example.com',
-                    company_name='Tech Solutions',
-                    industry='Technology'
+                    name='Sarah Connor',
+                    email='sarah.connor@example.com', 
                 )
             ]
             
+            # Set passwords for users
             for user in users:
+                user.set_password('password123')
                 db.session.add(user)
             
             db.session.commit()
             print(f"✅ Created {len(users)} users")
             
             # Get user IDs
-            john = User.query.filter_by(username='john_doe').first()
-            sarah = User.query.filter_by(username='sarah_connor').first()
+            john = User.query.filter_by(email='john.doe@example.com').first()
+            sarah = User.query.filter_by(email='sarah.connor@example.com').first()
             
             # Create sample assets
             print("🏗️  Creating sample assets...")
@@ -120,6 +117,129 @@ def seed_database():
             db.session.commit()
             print(f"✅ Created {len(assets)} assets")
             
+            # Get assets for reference
+            john_assets = Asset.query.filter_by(user_id=john.id).all()
+            sarah_assets = Asset.query.filter_by(user_id=sarah.id).all()
+            
+            # Create sample emissions with emission_type
+            print("🌫️  Creating sample emissions...")
+            emissions_data = [
+                # John's emissions - current month
+                {
+                    'user_id': john.id,
+                    'asset_id': john_assets[0].id if john_assets else None,
+                    'emission_type': 'machine',
+                    'activity': 'Construction work at downtown site',
+                    'source': 'Excavator',
+                    'original_value': 150,
+                    'unit': 'liters',
+                    'amount': 32.16,
+                    'calculation_method': 'standard',
+                    'emission_factor': 0.214,
+                    'date': datetime.utcnow() - timedelta(days=2)
+                },
+                {
+                    'user_id': john.id,
+                    'asset_id': john_assets[1].id if len(john_assets) > 1 else None,
+                    'emission_type': 'transport',
+                    'activity': 'Material delivery to industrial park',
+                    'source': 'Work Truck',
+                    'original_value': 80,
+                    'unit': 'km',
+                    'amount': 22.78,
+                    'calculation_method': 'standard',
+                    'emission_factor': 0.285,
+                    'date': datetime.utcnow() - timedelta(days=1)
+                },
+                {
+                    'user_id': john.id,
+                    'asset_id': john_assets[2].id if len(john_assets) > 2 else None,
+                    'emission_type': 'transport',
+                    'activity': 'Client meetings across town',
+                    'source': 'Company Car',
+                    'original_value': 50,
+                    'unit': 'km',
+                    'amount': 14.20,
+                    'calculation_method': 'standard',
+                    'emission_factor': 0.284,
+                    'date': datetime.utcnow()
+                },
+                {
+                    'user_id': john.id,
+                    'emission_type': 'electricity',
+                    'activity': 'Monthly office electricity consumption',
+                    'source': 'Office Electricity',
+                    'original_value': 350,
+                    'unit': 'kWh',
+                    'amount': 45.50,
+                    'calculation_method': 'standard',
+                    'emission_factor': 0.13,
+                    'date': datetime.utcnow() - timedelta(days=5)
+                },
+                
+                # John's emissions - previous month
+                {
+                    'user_id': john.id,
+                    'asset_id': john_assets[0].id if john_assets else None,
+                    'emission_type': 'machine',
+                    'activity': 'Site preparation work',
+                    'source': 'Excavator',
+                    'original_value': 120,
+                    'unit': 'liters',
+                    'amount': 28.45,
+                    'calculation_method': 'standard',
+                    'emission_factor': 0.214,
+                    'date': datetime.utcnow() - timedelta(days=35)
+                },
+                
+                # Sarah's emissions
+                {
+                    'user_id': sarah.id,
+                    'asset_id': sarah_assets[0].id if sarah_assets else None,
+                    'emission_type': 'transport',
+                    'activity': 'Commute to downtown offices',
+                    'source': 'Tesla',
+                    'original_value': 60,
+                    'unit': 'km',
+                    'amount': 0.0,
+                    'calculation_method': 'electric',
+                    'emission_factor': 0.0,
+                    'date': datetime.utcnow() - timedelta(days=3)
+                },
+                {
+                    'user_id': sarah.id,
+                    'asset_id': sarah_assets[1].id if len(sarah_assets) > 1 else None,
+                    'emission_type': 'electricity',
+                    'activity': 'Backup power during outage',
+                    'source': 'Generator',
+                    'original_value': 25,
+                    'unit': 'liters',
+                    'amount': 45.30,
+                    'calculation_method': 'standard',
+                    'emission_factor': 1.812,
+                    'date': datetime.utcnow() - timedelta(days=1)
+                },
+                {
+                    'user_id': sarah.id,
+                    'emission_type': 'transport',
+                    'activity': 'Business trip to conference',
+                    'source': 'Business Travel',
+                    'original_value': 300,
+                    'unit': 'km',
+                    'amount': 25.75,
+                    'calculation_method': 'standard',
+                    'emission_factor': 0.086,
+                    'date': datetime.utcnow() - timedelta(days=4)
+                }
+            ]
+            
+            for emission_data in emissions_data:
+                emission = Emission(**emission_data)
+                db.session.add(emission)
+            
+            db.session.commit()
+            print(f"✅ Created {len(emissions_data)} emissions")
+            
             # Create sample activities
             print("📊 Creating sample activities...")
             activities_data = [
@@ -129,7 +249,7 @@ def seed_database():
                     'title': 'Excavator X300',
                     'location': 'Construction Site A - Downtown Project',
                     'amount': 32.16,
-                    'unit': 'kg CO2',
+                    'unit': 'kg CO₂',
                     'badge': 'machine',
                     'icon': '🏗️',
                     'date': datetime.utcnow() - timedelta(days=2)
@@ -139,7 +259,7 @@ def seed_database():
                     'title': 'Work Truck',
                     'location': 'Office to Industrial Park delivery',
                     'amount': 22.78,
-                    'unit': 'kg CO2',
+                    'unit': 'kg CO₂',
                     'badge': 'vehicle',
                     'icon': '🚚',
                     'date': datetime.utcnow() - timedelta(days=1)
@@ -149,7 +269,7 @@ def seed_database():
                     'title': 'Company Sedan',
                     'location': 'Client meetings across town',
                     'amount': 14.20,
-                    'unit': 'kg CO2',
+                    'unit': 'kg CO₂',
                     'badge': 'vehicle',
                     'icon': '🚗',
                     'date': datetime.utcnow()
@@ -161,7 +281,7 @@ def seed_database():
                     'title': 'My Tesla Model 3',
                     'location': '3 times to Downtown offices',
                     'amount': 0.0,
-                    'unit': 'kg CO2',
+                    'unit': 'kg CO₂',
                     'badge': 'vehicle',
                     'icon': '🚗',
                     'date': datetime.utcnow() - timedelta(days=3)
@@ -171,7 +291,7 @@ def seed_database():
                     'title': 'Office Generator',
                     'location': 'Backup power during outage',
                     'amount': 45.30,
-                    'unit': 'kg CO2',
+                    'unit': 'kg CO₂',
                     'badge': 'machine',
                     'icon': '⚡',
                     'date': datetime.utcnow() - timedelta(days=1)
@@ -185,86 +305,6 @@ def seed_database():
             db.session.commit()
             print(f"✅ Created {len(activities_data)} activities")
             
-            # Create sample emissions
-            print("🌫️  Creating sample emissions...")
-            emissions_data = [
-                # Current month emissions for John
-                {
-                    'user_id': john.id,
-                    'amount': 32.16,
-                    'source': 'Excavator',
-                    'emission_type': 'machine',
-                    'date': datetime.utcnow() - timedelta(days=2)
-                },
-                {
-                    'user_id': john.id,
-                    'amount': 22.78,
-                    'source': 'Work Truck',
-                    'emission_type': 'transport',
-                    'date': datetime.utcnow() - timedelta(days=1)
-                },
-                {
-                    'user_id': john.id,
-                    'amount': 14.20,
-                    'source': 'Company Car',
-                    'emission_type': 'transport',
-                    'date': datetime.utcnow()
-                },
-                {
-                    'user_id': john.id,
-                    'amount': 45.50,
-                    'source': 'Office Electricity',
-                    'emission_type': 'electricity',
-                    'date': datetime.utcnow() - timedelta(days=5)
-                },
-                
-                # Previous month emissions for John (for comparison)
-                {
-                    'user_id': john.id,
-                    'amount': 28.45,
-                    'source': 'Excavator',
-                    'emission_type': 'machine',
-                    'date': datetime.utcnow() - timedelta(days=35)
-                },
-                {
-                    'user_id': john.id,
-                    'amount': 18.90,
-                    'source': 'Work Truck',
-                    'emission_type': 'transport',
-                    'date': datetime.utcnow() - timedelta(days=32)
-                },
-                
-                # Sarah's emissions
-                {
-                    'user_id': sarah.id,
-                    'amount': 0.0,
-                    'source': 'Tesla',
-                    'emission_type': 'transport',
-                    'date': datetime.utcnow() - timedelta(days=3)
-                },
-                {
-                    'user_id': sarah.id,
-                    'amount': 45.30,
-                    'source': 'Generator',
-                    'emission_type': 'electricity',
-                    'date': datetime.utcnow() - timedelta(days=1)
-                },
-                {
-                    'user_id': sarah.id,
-                    'amount': 25.75,
-                    'source': 'Business Travel',
-                    'emission_type': 'transport',
-                    'date': datetime.utcnow() - timedelta(days=4)
-                }
-            ]
-            
-            for emission_data in emissions_data:
-                emission = Emission(**emission_data)
-                db.session.add(emission)
-            
-            db.session.commit()
-            print(f"✅ Created {len(emissions_data)} emissions")
-            
             # Create sample goals
             print("🎯 Creating sample goals...")
             goals_data = [
@@ -273,28 +313,28 @@ def seed_database():
                     'title': 'Reduce machine emissions by 20%',
                     'target_reduction_percentage': 20,
                     'status': 'active',
-                    'deadline': datetime.utcnow() + timedelta(days=90)
+                    'end_date': datetime.utcnow() + timedelta(days=90)
                 },
                 {
                     'user_id': john.id,
                     'title': 'Switch to electric vehicles',
                     'target_reduction_percentage': 35,
                     'status': 'active',
-                    'deadline': datetime.utcnow() + timedelta(days=180)
+                    'end_date': datetime.utcnow() + timedelta(days=180)
                 },
                 {
                     'user_id': sarah.id,
                     'title': 'Achieve carbon neutrality',
                     'target_reduction_percentage': 100,
                     'status': 'active',
-                    'deadline': datetime.utcnow() + timedelta(days=365)
+                    'end_date': datetime.utcnow() + timedelta(days=365)
                 },
                 {
                     'user_id': sarah.id,
                     'title': 'Reduce generator usage by 50%',
                     'target_reduction_percentage': 50,
                     'status': 'completed',
-                    'deadline': datetime.utcnow() - timedelta(days=30)
+                    'end_date': datetime.utcnow() - timedelta(days=30)
                 }
             ]
             
@@ -314,7 +354,9 @@ def seed_database():
                     'user_id': john.id,
                     'year': current_date.year,
                     'month': current_date.month,
-                    'total_emissions': 114.64,  # Sum of current month emissions
+                    'total_emissions': 114.64,
+                    'previous_month_emissions': 47.35,
+                    'percent_change': -58.7,
                     'electricity_emissions': 45.50,
                     'transport_emissions': 36.98,
                     'food_emissions': 0.0,
@@ -325,7 +367,9 @@ def seed_database():
                     'user_id': john.id,
                     'year': (current_date - timedelta(days=35)).year,
                     'month': (current_date - timedelta(days=35)).month,
-                    'total_emissions': 47.35,  # Sum of previous month emissions
+                    'total_emissions': 47.35,
+                    'previous_month_emissions': 52.10,
+                    'percent_change': -9.1,
                     'electricity_emissions': 0.0,
                     'transport_emissions': 18.90,
                     'food_emissions': 0.0,
@@ -337,6 +381,8 @@ def seed_database():
                     'year': current_date.year,
                     'month': current_date.month,
                     'total_emissions': 71.05,
+                    'previous_month_emissions': 65.20,
+                    'percent_change': 8.2,
                     'electricity_emissions': 45.30,
                     'transport_emissions': 25.75,
                     'food_emissions': 0.0,
@@ -364,12 +410,14 @@ def seed_database():
             print("\n📝 Sample User IDs for testing:")
             print(f"   John Doe: {john.id}")
             print(f"   Sarah Connor: {sarah.id}")
+            print("\n🔑 Default password for all users: password123")
             print("\n🚀 You can now start the server with: python app.py")
             
         except Exception as e:
             db.session.rollback()
             print(f"❌ Error seeding database: {str(e)}")
-            raise
+            import traceback
+            traceback.print_exc()
 
 if __name__ == '__main__':
     seed_database()
