@@ -78,7 +78,7 @@ const FeatureGrid = () => {
                         className="bg-[#3bb043] border border-[#82bf89] shadow-md rounded-[28px] p-6 hover:scale-105 transition-transform duration-300 ease-out"    
                     >
                         {/* Icon */}
-                        <div className="bg-[#95ff9d] w-14 h-14 rounded-xl flex items-center justify-center mb-5 text-[#3bb043]">
+                        <div className="bg-[#95ff9d] w-14 h-14 rounded-xl flex items-center justify-center mb-5 text-[#3bb043] hover:scale-110 transition-transform">
                             {feature.icon}
                         </div>
 

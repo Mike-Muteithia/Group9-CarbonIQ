@@ -28,7 +28,7 @@ const Navbar = () => {
                         <a href="#howitworks" className="hover:text-green-600">How It Works</a>
                     </li>
                     <li>
-                        <a href="#contact" className="hover:text-green-600">Contact</a>
+                        <a href="#contactus" className="hover:text-green-600">ContactUs</a>
                     </li>
                 </ul>
 
@@ -36,13 +36,13 @@ const Navbar = () => {
                 <div className="hidden md:flex space-x-3">
                     <Link 
                         to="/login" 
-                        className="px-4.5 py-2 border border-green-600 text-green-600 text-[0.80rem] rounded-lg hover:bg-green-600 hover:text-white transition-colors duration-200"
+                        className="px-4.5 py-2 border border-green-600 text-green-600 text-[0.80rem] rounded-lg hover:bg-green-600 hover:text-white transition-colors duration-200 hover:scale-110 transition-transform"
                     >
                         Log In
                     </Link>
                     <Link
                         to="/signup"
-                        className="px-4.5 py-2 bg-green-600 text-white text-[0.80rem] rounded-lg hover:bg-green-700 transition-colors duration-200"
+                        className="px-4.5 py-2 bg-green-600 text-white text-[0.80rem] rounded-lg hover:bg-green-700 transition-colors duration-200 hover:scale-110 transition-transform"
                     >
                         Sign Up
                     </Link>
