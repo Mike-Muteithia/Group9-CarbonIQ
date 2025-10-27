@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
-const AddAssetForm = () => {
+const AddAssetForm = ({ asset, onSubmit, onClose }) => {
   const [assetData, setAssetData] = useState({
-    assetName: '',
-    type: 'Vehicle',
-    category: '',
-    fuelType: 'Gasoline',
-    makeModel: '',
-    year: new Date().getFullYear(),
-    notes: '',
+    name: '',
+    type: 'vehicle',
+    fuel_type: 'gasoline',
+    model: '',
+    year: new Date().getFullYear().toString(),
+    emoji: '🚗',
+    carbon_impact: 0
   });
+
+  // Load existing asset data if editing
+  useEffect(() => {
+    if (asset) {
+      setAssetData({
+        name: asset.name || '',
+        type: asset.type || 'vehicle',
+        fuel_type: asset.fuel_type || 'gasoline',
+        model: asset.model || '',
+        year: asset.year || new Date().getFullYear().toString(),
+        emoji: asset.emoji || '🚗',
+        carbon_impact: asset.carbon_impact || 0
+      });
+    }
+  }, [asset]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,134 +34,170 @@ const AddAssetForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Asset created:', assetData);
+    onSubmit(assetData);
   };
 
   const handleCancel = () => {
-    setAssetData({
-      assetName: '',
-      type: 'Vehicle',
-      category: '',
-      fuelType: 'Gasoline',
-      makeModel: '',
-      year: new Date().getFullYear(),
-      notes: '',
-    });
+    onClose();
+  };
+
+  // Emoji options based on type
+  const getEmojiOptions = (type) => {
+    const emojiMap = {
+      vehicle: ['🚗', '🚙', '🚚', '🚐', '🏎️'],
+      machine: ['🏗️', '⚡', '🔧', '⚙️', '🛠️'],
+      aircraft: ['✈️', '🛩️', '🚁', '🛫']
+    };
+    return emojiMap[type] || ['📝'];
   };
 
   return (
-    <div className="max-w-6xl mx-auto bg-white border border-gray-200 shadow rounded-xl p-8 mt-10">
-      <h2 className="text-2xl font-bold mb-2">Add New Asset</h2>
-      <div className="h-px bg-gray-200 mb-8"></div>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-semibold text-gray-800">Asset Name *</label>
-            <input
-              type="text"
-              name="assetName"
-              placeholder="e.g., My Tesla Model 3"
-              value={assetData.assetName}
-              onChange={handleChange}
-              className="mt-2 w-full border border-gray-300 bg-gray-50 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-800">Type *</label>
-            <select
-              name="type"
-              value={assetData.type}
-              onChange={handleChange}
-              className="mt-2 w-full border border-gray-300 bg-gray-50 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-              required
-            >
-              <option>Vehicle</option>
-              <option>Aircraft</option>
-              <option>Machine</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-800">Category</label>
-            <input
-              type="text"
-              name="category"
-              placeholder="e.g., Electric Car, Diesel Truck"
-              value={assetData.category}
-              onChange={handleChange}
-              className="mt-2 w-full border border-gray-300 bg-gray-50 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-800">Fuel Type *</label>
-            <select
-              name="fuelType"
-              value={assetData.fuelType}
-              onChange={handleChange}
-              className="mt-2 w-full border border-gray-300 bg-gray-50 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-              required
-            >
-              <option>Gasoline</option>
-              <option>Diesel</option>
-              <option>Electric</option>
-              <option>Hybrid</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-800">Make & Model</label>
-            <input
-              type="text"
-              name="makeModel"
-              placeholder="e.g., Tesla Model 3"
-              value={assetData.makeModel}
-              onChange={handleChange}
-              className="mt-2 w-full border border-gray-300 bg-gray-50 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-800">Year</label>
-            <input
-              type="number"
-              name="year"
-              value={assetData.year}
-              onChange={handleChange}
-              className="mt-2 w-full border border-gray-300 bg-gray-50 rounded-md p-3 focus:ring-green-500 focus:border-green-500"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-semibold text-gray-800">Notes</label>
-          <textarea
-            name="notes"
-            placeholder="Additional details about this activity..."
-            value={assetData.notes}
-            onChange={handleChange}
-            className="mt-2 w-full border border-gray-300 bg-gray-50 rounded-md p-3 h-24 focus:ring-green-500 focus:border-green-500"
-          ></textarea>
-        </div>
-
-        <div className="flex justify-end gap-4 mt-6">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="max-w-3xl w-full bg-white rounded-xl shadow-xl overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-900">
+            {asset ? 'Edit Asset' : 'Add New Asset'}
+          </h2>
           <button
-            type="button"
             onClick={handleCancel}
-            className="flex items-center gap-2 px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100"
+            className="p-2 hover:bg-gray-100 rounded-full transition"
           >
-            <X className="w-4 h-4" /> Cancel
-          </button>
-          <button
-            type="submit"
-            className="px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-          >
-            Create Asset
+            <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
-      </form>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="p-6">
+          <div className="space-y-6">
+            {/* Asset Name */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-800 mb-2">
+                Asset Name *
+              </label>
+              <input
+                type="text"
+                name="name"
+                placeholder="e.g., My Tesla Model 3"
+                value={assetData.name}
+                onChange={handleChange}
+                className="w-full border border-gray-300 bg-gray-50 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            {/* Type and Fuel Type */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  Type *
+                </label>
+                <select
+                  name="type"
+                  value={assetData.type}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 bg-gray-50 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="vehicle">Vehicle</option>
+                  <option value="aircraft">Aircraft</option>
+                  <option value="machine">Machine</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  Fuel Type *
+                </label>
+                <select
+                  name="fuel_type"
+                  value={assetData.fuel_type}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 bg-gray-50 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  required
+                >
+                  <option value="gasoline">Gasoline</option>
+                  <option value="diesel">Diesel</option>
+                  <option value="electric">Electric</option>
+                  <option value="hybrid">Hybrid</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Model and Year */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  Make & Model
+                </label>
+                <input
+                  type="text"
+                  name="model"
+                  placeholder="e.g., Tesla Model 3"
+                  value={assetData.model}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 bg-gray-50 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-800 mb-2">
+                  Year
+                </label>
+                <input
+                  type="text"
+                  name="year"
+                  placeholder="e.g., 2023"
+                  value={assetData.year}
+                  onChange={handleChange}
+                  className="w-full border border-gray-300 bg-gray-50 rounded-lg p-3 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  maxLength="4"
+                />
+              </div>
+            </div>
+
+            {/* Emoji Selection */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-800 mb-2">
+                Icon
+              </label>
+              <div className="flex gap-2">
+                {getEmojiOptions(assetData.type).map((emoji) => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    onClick={() => setAssetData({ ...assetData, emoji })}
+                    className={`w-12 h-12 text-2xl rounded-lg border-2 transition ${
+                      assetData.emoji === emoji
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 hover:border-gray-300'
+                    }`}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-4 mt-8 pt-6 border-t border-gray-200">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition font-medium"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium"
+            >
+              {asset ? 'Save Changes' : 'Create Asset'}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
