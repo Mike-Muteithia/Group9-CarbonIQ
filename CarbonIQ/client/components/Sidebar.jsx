@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, Activity, Bot, Target } from 'lucide-react';
-import logo from '../assets/Logo.png';
+import logo from '../assets/logo.png';
 import MetricsCard from './MetricsCard'; // Import MetricsCard
 
 const Sidebar = () => {
@@ -10,7 +10,7 @@ const Sidebar = () => {
   const userId = 1; // Get this from auth context later
 
   const menuItems = [
-    { name: 'Dashboard', icon: LayoutDashboard, path: '/' },
+    { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { name: 'My Assets', icon: Briefcase, path: '/assets' },
     { name: 'Activities', icon: Activity, path: '/activities' },
     { name: 'AI EcoCoach', icon: Bot, path: '/ecocoach' },
@@ -21,12 +21,13 @@ const Sidebar = () => {
     <aside className="w-64 bg-white border-r border-gray-200 flex flex-col justify-between fixed left-0 top-0 h-screen shadow-sm">
       {/* Logo and Title */}
       <div>
-        <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-100">
-          <img src={logo} alt="CarbonIQ Logo" className="w-10 h-10 object-contain" />
-          <div>
-            <h1 className="text-lg font-bold text-gray-900">CarbonIQ</h1>
-            <p className="text-xs text-gray-500">Track • Analyze • Reduce</p>
-          </div>
+        {/* Logo */}
+        <div className="flex items-center">
+          <img 
+            src={logo} 
+            alt="CarbonIQ Logo" 
+            className="h-srceen w-[210px] object-contain" 
+          />
         </div>
 
         {/* Navigation */}
