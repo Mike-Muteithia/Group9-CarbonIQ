@@ -9,9 +9,9 @@ from emissionservice import EmissionService
 try:
     from emissionservice import EmissionService
     emission_service_available = True
-    print("✅ EmissionService imported successfully")
+    print(" EmissionService imported successfully")
 except ImportError as e:
-    print(f"⚠️ EmissionService not available: {e}")
+    print(f" EmissionService not available: {e}")
     emission_service_available = False
 
 api = Blueprint('api', __name__, url_prefix='/api')
@@ -33,7 +33,7 @@ def test_db():
         
         # Test activities
         activities_count = Activity.query.count()
-        print(f"📝 Activities in DB: {activities_count}")
+        print(f" Activities in DB: {activities_count}")
         
         # Test specific user
         user_1 = User.query.get(1)
@@ -53,7 +53,7 @@ def test_db():
         }), 200
         
     except Exception as e:
-        print(f"❌ Database test failed: {str(e)}")
+        print(f" Database test failed: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -64,17 +64,17 @@ def get_dashboard_stats(user_id):
     Get statistics for the 4 cards at the top of dashboard
     """
     try:
-        print(f"📊 Fetching dashboard stats for user {user_id}")
+        print(f" Fetching dashboard stats for user {user_id}")
         
         # Check if user exists
         user = User.query.get(user_id)
         if not user:
-            print(f"❌ User {user_id} not found")
+            print(f" User {user_id} not found")
             return jsonify({'error': 'User not found'}), 404
         
         # Total Emission (all time)
         total_emission = db.session.query(func.sum(Emission.amount)).filter_by(user_id=user_id).scalar() or 0
-        print(f"📈 Total emission: {total_emission}")
+        print(f" Total emission: {total_emission}")
         
         # This Month Emission
         first_day_of_month = datetime.utcnow().replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -82,18 +82,18 @@ def get_dashboard_stats(user_id):
             Emission.user_id == user_id,
             Emission.date >= first_day_of_month
         ).scalar() or 0
-        print(f"📅 This month emission: {this_month}")
+        print(f" This month emission: {this_month}")
         
         # Activities Logged (this month)
         activities_count = Activity.query.filter(
             Activity.user_id == user_id,
             Activity.date >= first_day_of_month
         ).count()
-        print(f"📝 Activities logged: {activities_count}")
+        print(f" Activities logged: {activities_count}")
         
         # Active Goals
         active_goals = Goal.query.filter_by(user_id=user_id, status='active').count()
-        print(f"🎯 Active goals: {active_goals}")
+        print(f" Active goals: {active_goals}")
         
         response_data = {
             'totalEmission': round(total_emission, 2),
@@ -113,9 +113,9 @@ def get_dashboard_stats(user_id):
                     'message': enhanced_stats.get('message', ''),
                     'category_breakdown': enhanced_stats.get('category_breakdown', {})
                 }
-                print("✅ Enhanced stats added")
+                print(" Enhanced stats added")
             except Exception as e:
-                print(f"⚠️ Enhanced stats failed: {e}")
+                print(f" Enhanced stats failed: {e}")
                 response_data['enhancedData'] = {
                     'change_percent': 0,
                     'change_type': 'neutral', 
@@ -132,65 +132,83 @@ def get_dashboard_stats(user_id):
                 'category_breakdown': {}
             }
         
-        print(f"✅ Returning dashboard stats: {response_data}")
+        print(f" Returning dashboard stats: {response_data}")
         return jsonify(response_data), 200
         
     except Exception as e:
-        print(f"❌ Error in dashboard stats: {str(e)}")
+        print(f" Error in dashboard stats: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 # GET EMISSIONS TREND (Last 30 Days)
-@api.route('/dashboard/emissions-trend/<int:user_id>', methods=['GET'])
+
+
+@api.route('/api/dashboard/emissions-trend/<int:user_id>')
 def get_emissions_trend(user_id):
-    """
-    Get emissions data for the line chart (last 30 days)
-    Returns: [{ date: 'Dec 19', value: 2.5 }, ...]
-    """
     try:
         days = request.args.get('days', 30, type=int)
         start_date = datetime.utcnow() - timedelta(days=days)
         
-        print(f"🔍 Querying emissions trend for user {user_id}, last {days} days from {start_date}")
+        print(f" Querying emissions trend for user {user_id}, last {days} days from {start_date}")
         
-        # Check if user exists
-        user = User.query.get(user_id)
-        if not user:
-            print(f"❌ User {user_id} not found")
-            return jsonify({'error': 'User not found'}), 404
-        
-        # Query emissions grouped by date
-        emissions = db.session.query(
-            func.date(Emission.date).label('date'),
-            func.sum(Emission.amount).label('value')
-        ).filter(
+        # Query emissions data
+        emissions = Emission.query.filter(
             Emission.user_id == user_id,
             Emission.date >= start_date
-        ).group_by(func.date(Emission.date)).order_by('date').all()
+        ).order_by(Emission.date).all()
         
-        print(f"📊 Found {len(emissions)} emission records")
+        print(f" Found {len(emissions)} emission records")
         
-        # If no emissions found, return empty array instead of error
-        if not emissions:
-            print("ℹ️ No emissions found, returning empty trend")
-            return jsonify([]), 200
+        trend_data = []
+        for emission in emissions:
+            # DEBUG: Check what we're getting
+            print(f" Emission date: {emission.date}, Type: {type(emission.date)}")
+            
+            # Handle both string and datetime dates
+            if isinstance(emission.date, str):
+                # Convert string to datetime
+                try:
+                    # Try different date formats
+                    date_formats = [
+                        '%Y-%m-%d %H:%M:%S.%f',
+                        '%Y-%m-%d %H:%M:%S', 
+                        '%Y-%m-%d'
+                    ]
+                    
+                    date_obj = None
+                    for fmt in date_formats:
+                        try:
+                            date_obj = datetime.strptime(emission.date, fmt)
+                            break
+                        except ValueError:
+                            continue
+                    
+                    if date_obj:
+                        formatted_date = date_obj.strftime('%b %d')
+                    else:
+                        formatted_date = "Unknown"
+                        
+                except Exception as e:
+                    print(f"❌ Date conversion error: {e}")
+                    formatted_date = "Error"
+            else:
+                # It's already a datetime object
+                formatted_date = emission.date.strftime('%b %d')
+            
+            trend_data.append({
+                'date': formatted_date,
+                'emission': float(emission.amount)
+            })
         
-        # Format data for chart
-        trend_data = [
-            {
-                'date': emission.date.strftime('%b %d'),
-                'value': round(emission.value, 2)
-            }
-            for emission in emissions
-        ]
-        
-        print(f"📈 Returning trend data: {trend_data}")
-        return jsonify(trend_data), 200
+        print(f" Returning trend data: {trend_data}")
+        return jsonify(trend_data)
         
     except Exception as e:
-        print(f"❌ Error in emissions trend: {str(e)}")
+        print(f" Error in emissions trend: {str(e)}")
+        import traceback
         traceback.print_exc()
-        return jsonify({'error': str(e)}), 500
+        # Return empty array instead of error for now
+        return jsonify([])
 
 # GET TOP EMITTERS (For pie chart)
 @api.route('/dashboard/top-emitters/<int:user_id>', methods=['GET'])
@@ -205,7 +223,7 @@ def get_top_emitters(user_id):
         # Check if user exists
         user = User.query.get(user_id)
         if not user:
-            print(f"❌ User {user_id} not found")
+            print(f" User {user_id} not found")
             return jsonify({'error': 'User not found'}), 404
         
         # Query top emitters
@@ -216,11 +234,11 @@ def get_top_emitters(user_id):
             func.sum(Emission.amount).desc()
         ).limit(4).all()
         
-        print(f"📊 Found {len(top_emitters)} top emitters")
+        print(f" Found {len(top_emitters)} top emitters")
         
         # If no emitters found, return empty array
         if not top_emitters:
-            print("ℹ️ No emitters found, returning empty array")
+            print(" No emitters found, returning empty array")
             return jsonify([]), 200
         
         # Color palette for chart
@@ -239,11 +257,11 @@ def get_top_emitters(user_id):
             for i, emitter in enumerate(top_emitters)
         ]
         
-        print(f"📈 Returning top emitters: {emitters_data}")
+        print(f" Returning top emitters: {emitters_data}")
         return jsonify(emitters_data), 200
         
     except Exception as e:
-        print(f"❌ Error in top emitters: {str(e)}")
+        print(f" Error in top emitters: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -268,15 +286,15 @@ def get_recent_activities(user_id):
             Activity.date.desc()
         ).limit(limit).all()
         
-        print(f"📊 Found {len(activities)} activities")
+        print(f" Found {len(activities)} activities")
         
         activities_data = [activity.to_dict() for activity in activities]
-        print(f"📈 Returning activities: {activities_data}")
+        print(f" Returning activities: {activities_data}")
         
         return jsonify(activities_data), 200
         
     except Exception as e:
-        print(f"❌ Error in recent activities: {str(e)}")
+        print(f" Error in recent activities: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -323,14 +341,14 @@ def create_asset():
         for field in required_fields:
             if field not in data:
                 error_msg = f'Missing required field: {field}'
-                print(f"❌ {error_msg}")
+                print(f" {error_msg}")
                 return jsonify({'error': error_msg}), 400
         
         # Check if user exists
         user = User.query.get(data['user_id'])
         if not user:
             error_msg = f"User {data['user_id']} not found"
-            print(f"❌ {error_msg}")
+            print(f" {error_msg}")
             return jsonify({'error': error_msg}), 404
         
         new_asset = Asset(
@@ -347,7 +365,7 @@ def create_asset():
         db.session.add(new_asset)
         db.session.commit()
         
-        print(f"✅ Asset created successfully: {new_asset.to_dict()}")
+        print(f" Asset created successfully: {new_asset.to_dict()}")
         return jsonify({
             'message': 'Asset created successfully!',
             'asset': new_asset.to_dict()
@@ -355,7 +373,7 @@ def create_asset():
         
     except Exception as e:
         db.session.rollback()
-        print(f"❌ Error creating asset: {str(e)}")
+        print(f" Error creating asset: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -370,11 +388,11 @@ def update_asset(asset_id):
         asset = Asset.query.get(asset_id)
         
         if not asset:
-            print(f"❌ Asset {asset_id} not found")
+            print(f" Asset {asset_id} not found")
             return jsonify({'error': 'Asset not found'}), 404
         
         data = request.get_json()
-        print(f"📝 Updating asset {asset_id}: {data}")
+        print(f" Updating asset {asset_id}: {data}")
         
         # Update fields
         if 'name' in data:
@@ -392,7 +410,7 @@ def update_asset(asset_id):
         
         db.session.commit()
         
-        print(f"✅ Asset updated successfully: {asset.to_dict()}")
+        print(f" Asset updated successfully: {asset.to_dict()}")
         return jsonify({
             'message': 'Asset updated successfully!',
             'asset': asset.to_dict()
@@ -400,7 +418,7 @@ def update_asset(asset_id):
         
     except Exception as e:
         db.session.rollback()
-        print(f"❌ Error updating asset: {str(e)}")
+        print(f" Error updating asset: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -414,21 +432,21 @@ def delete_asset(asset_id):
         asset = Asset.query.get(asset_id)
         
         if not asset:
-            print(f"❌ Asset {asset_id} not found")
+            print(f" Asset {asset_id} not found")
             return jsonify({'error': 'Asset not found'}), 404
         
-        print(f"🗑️ Deleting asset {asset_id}: {asset.name}")
+        print(f" Deleting asset {asset_id}: {asset.name}")
         
         # Soft delete
         asset.status = 'deleted'
         db.session.commit()
         
-        print("✅ Asset deleted successfully!")
+        print(" Asset deleted successfully!")
         return jsonify({'message': 'Asset deleted successfully!'}), 200
         
     except Exception as e:
         db.session.rollback()
-        print(f"❌ Error deleting asset: {str(e)}")
+        print(f" Error deleting asset: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -439,19 +457,19 @@ def get_single_asset(asset_id):
     Get details of a single asset
     """
     try:
-        print(f"🔍 Querying single asset {asset_id}")
+        print(f" Querying single asset {asset_id}")
         
         asset = Asset.query.get(asset_id)
         
         if not asset:
-            print(f"❌ Asset {asset_id} not found")
+            print(f" Asset {asset_id} not found")
             return jsonify({'error': 'Asset not found'}), 404
         
-        print(f"✅ Found asset: {asset.to_dict()}")
+        print(f" Found asset: {asset.to_dict()}")
         return jsonify(asset.to_dict()), 200
         
     except Exception as e:
-        print(f"❌ Error getting single asset: {str(e)}")
+        print(f" Error getting single asset: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -462,12 +480,12 @@ def seed_data(user_id):
     Create sample data for testing (REMOVE IN PRODUCTION)
     """
     try:
-        print(f"🌱 Seeding sample data for user {user_id}")
+        print(f" Seeding sample data for user {user_id}")
         
         # Check if user exists
         user = User.query.get(user_id)
         if not user:
-            print(f"❌ User {user_id} not found")
+            print(f" User {user_id} not found")
             return jsonify({'error': 'User not found'}), 404
         
         # Create sample assets
@@ -498,12 +516,12 @@ def seed_data(user_id):
         
         db.session.commit()
         
-        print("✅ Sample data created successfully!")
+        print(" Sample data created successfully!")
         return jsonify({'message': 'Sample data created successfully!'}), 201
         
     except Exception as e:
         db.session.rollback()
-        print(f"❌ Error seeding data: {str(e)}")
+        print(f" Error seeding data: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -513,19 +531,19 @@ def record_emission():
     """Record a new emission with automatic calculation"""
     try:
         data = request.get_json()
-        print(f"🌫️ Recording new emission: {data}")
+        print(f" Recording new emission: {data}")
         
         required_fields = ['user_id', 'original_value', 'emission_type']
         if not all(field in data for field in required_fields):
             error_msg = 'Missing required fields'
-            print(f"❌ {error_msg}")
+            print(f" {error_msg}")
             return jsonify({'error': error_msg}), 400
         
         # Check if user exists
         user = User.query.get(data['user_id'])
         if not user:
             error_msg = f"User {data['user_id']} not found"
-            print(f"❌ {error_msg}")
+            print(f" {error_msg}")
             return jsonify({'error': error_msg}), 404
         
         if emission_service_available:
@@ -548,7 +566,7 @@ def record_emission():
             db.session.add(emission)
             db.session.commit()
         
-        print(f"✅ Emission recorded successfully: {emission.to_dict()}")
+        print(f" Emission recorded successfully: {emission.to_dict()}")
         return jsonify({
             'message': 'Emission recorded successfully',
             'emission': emission.to_dict(),
@@ -556,7 +574,7 @@ def record_emission():
         }), 201
         
     except Exception as e:
-        print(f"❌ Error recording emission: {str(e)}")
+        print(f" Error recording emission: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -568,19 +586,19 @@ def get_user_emissions(user_id):
         page = request.args.get('page', 1, type=int)
         per_page = request.args.get('per_page', 20, type=int)
         
-        print(f"🔍 Querying emissions for user {user_id}, page {page}, per_page {per_page}")
+        print(f" Querying emissions for user {user_id}, page {page}, per_page {per_page}")
         
         # Check if user exists
         user = User.query.get(user_id)
         if not user:
-            print(f"❌ User {user_id} not found")
+            print(f" User {user_id} not found")
             return jsonify({'error': 'User not found'}), 404
         
         emissions = Emission.query.filter_by(user_id=user_id)\
             .order_by(Emission.date.desc())\
             .paginate(page=page, per_page=per_page, error_out=False)
         
-        print(f"📊 Found {emissions.total} total emissions, showing {len(emissions.items)} on page {page}")
+        print(f" Found {emissions.total} total emissions, showing {len(emissions.items)} on page {page}")
         
         return jsonify({
             'emissions': [e.to_dict() for e in emissions.items],
@@ -589,7 +607,7 @@ def get_user_emissions(user_id):
             'current_page': page
         })
     except Exception as e:
-        print(f"❌ Error getting user emissions: {str(e)}")
+        print(f" Error getting user emissions: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -604,7 +622,7 @@ def get_emission_categories(user_id):
         # Check if user exists
         user = User.query.get(user_id)
         if not user:
-            print(f"❌ User {user_id} not found")
+            print(f" User {user_id} not found")
             return jsonify({'error': 'User not found'}), 404
         
         summary = MonthlySummary.query.filter_by(
@@ -614,7 +632,7 @@ def get_emission_categories(user_id):
         ).first()
         
         if not summary:
-            print("ℹ️ No monthly summary found, returning zeros")
+            print(" No monthly summary found, returning zeros")
             return jsonify({
                 'electricity': 0,
                 'transport': 0,
@@ -633,7 +651,7 @@ def get_emission_categories(user_id):
         return jsonify(result), 200
         
     except Exception as e:
-        print(f"❌ Error getting emission categories: {str(e)}")
+        print(f" Error getting emission categories: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -644,12 +662,12 @@ def seed_emission_data(user_id):
     Create sample emission data for testing (REMOVE IN PRODUCTION)
     """
     try:
-        print(f"🌱 Seeding emission data for user {user_id}")
+        print(f" Seeding emission data for user {user_id}")
         
         # Check if user exists
         user = User.query.get(user_id)
         if not user:
-            print(f"❌ User {user_id} not found")
+            print(f" User {user_id} not found")
             return jsonify({'error': 'User not found'}), 404
         
         sample_emissions = [
@@ -731,7 +749,7 @@ def seed_emission_data(user_id):
                 db.session.commit()
             created_emissions.append(emission.to_dict())
         
-        print(f"✅ Created {len(created_emissions)} sample emissions")
+        print(f" Created {len(created_emissions)} sample emissions")
         return jsonify({
             'message': 'Sample emission data created successfully!',
             'emissions_created': len(created_emissions),
@@ -739,7 +757,7 @@ def seed_emission_data(user_id):
         }), 201
         
     except Exception as e:
-        print(f"❌ Error seeding emission data: {str(e)}")
+        print(f" Error seeding emission data: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
@@ -748,23 +766,23 @@ def seed_emission_data(user_id):
 def get_enhanced_stats(user_id):
     """Get enhanced dashboard stats with emissions service"""
     try:
-        print(f"📊 Fetching enhanced stats for user {user_id}")
+        print(f" Fetching enhanced stats for user {user_id}")
         
         # Check if user exists
         user = User.query.get(user_id)
         if not user:
-            print(f"❌ User {user_id} not found")
+            print(f" User {user_id} not found")
             return jsonify({'error': 'User not found'}), 404
         
         if emission_service_available:
             stats = EmissionService.get_dashboard_stats(user_id)
-            print(f"✅ Enhanced stats: {stats}")
+            print(f" Enhanced stats: {stats}")
             return jsonify({
                 'success': True,
                 'enhancedData': stats
             }), 200
         else:
-            print("⚠️ EmissionService not available for enhanced stats")
+            print(" EmissionService not available for enhanced stats")
             return jsonify({
                 'success': False,
                 'error': 'EmissionService not available',
@@ -772,6 +790,29 @@ def get_enhanced_stats(user_id):
             }), 200
             
     except Exception as e:
-        print(f"❌ Error getting enhanced stats: {str(e)}")
+        print(f" Error getting enhanced stats: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+    
+@api.route('/api/debug/emissions/<int:user_id>')
+def debug_emissions(user_id):
+    """Debug route to check emission data types"""
+    emissions = Emission.query.filter_by(user_id=user_id).limit(5).all()
+    
+    debug_info = {
+        'total_records': len(emissions),
+        'emissions': []
+    }
+    
+    for e in emissions:
+        debug_info['emissions'].append({
+            'id': e.id,
+            'source': e.source,
+            'amount': e.amount,
+            'date_raw': str(e.date),
+            'date_type': str(type(e.date)),
+            'is_string': isinstance(e.date, str),
+            'is_datetime': isinstance(e.date, datetime)
+        })
+    
+    return jsonify(debug_info)
