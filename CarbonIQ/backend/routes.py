@@ -3,6 +3,7 @@ from models import db, User, Asset, Emission, Activity, Goal, MonthlySummary
 from sqlalchemy import func
 from datetime import datetime, timedelta
 import traceback
+from emissionservice import EmissionService
 
 # Try to import EmissionService, but handle if it doesn't exist
 try:
