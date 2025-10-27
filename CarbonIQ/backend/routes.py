@@ -149,7 +149,7 @@ def get_emissions_trend(user_id):
         days = request.args.get('days', 30, type=int)
         start_date = datetime.utcnow() - timedelta(days=days)
         
-        print(f" Querying emissions trend for user {user_id}, last {days} days from {start_date}")
+        print(f"🔍 Querying emissions trend for user {user_id}, last {days} days from {start_date}")
         
         # Query emissions data
         emissions = Emission.query.filter(
@@ -157,59 +157,37 @@ def get_emissions_trend(user_id):
             Emission.date >= start_date
         ).order_by(Emission.date).all()
         
-        print(f" Found {len(emissions)} emission records")
+        print(f"📊 Found {len(emissions)} emission records")
         
         trend_data = []
         for emission in emissions:
-            # DEBUG: Check what we're getting
-            print(f" Emission date: {emission.date}, Type: {type(emission.date)}")
-            
             # Handle both string and datetime dates
             if isinstance(emission.date, str):
-                # Convert string to datetime
                 try:
-                    # Try different date formats
-                    date_formats = [
-                        '%Y-%m-%d %H:%M:%S.%f',
-                        '%Y-%m-%d %H:%M:%S', 
-                        '%Y-%m-%d'
-                    ]
-                    
-                    date_obj = None
-                    for fmt in date_formats:
-                        try:
-                            date_obj = datetime.strptime(emission.date, fmt)
-                            break
-                        except ValueError:
-                            continue
-                    
-                    if date_obj:
+                    date_obj = datetime.strptime(emission.date, '%Y-%m-%d %H:%M:%S.%f')
+                    formatted_date = date_obj.strftime('%b %d')
+                except ValueError:
+                    try:
+                        date_obj = datetime.strptime(emission.date, '%Y-%m-%d %H:%M:%S')
                         formatted_date = date_obj.strftime('%b %d')
-                    else:
+                    except ValueError:
                         formatted_date = "Unknown"
-                        
-                except Exception as e:
-                    print(f"❌ Date conversion error: {e}")
-                    formatted_date = "Error"
             else:
-                # It's already a datetime object
                 formatted_date = emission.date.strftime('%b %d')
             
+            # Use 'value' instead of 'emission' to match frontend
             trend_data.append({
                 'date': formatted_date,
-                'emission': float(emission.amount)
+                'value': float(emission.amount)  # Changed from 'emission' to 'value'
             })
         
-        print(f" Returning trend data: {trend_data}")
+        print(f"📈 Returning trend data: {trend_data}")
         return jsonify(trend_data)
         
     except Exception as e:
-        print(f" Error in emissions trend: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        # Return empty array instead of error for now
+        print(f"❌ Error in emissions trend: {str(e)}")
+        # Return empty array with proper structure
         return jsonify([])
-
 # GET TOP EMITTERS (For pie chart)
 @api.route('/dashboard/top-emitters/<int:user_id>', methods=['GET'])
 def get_top_emitters(user_id):
