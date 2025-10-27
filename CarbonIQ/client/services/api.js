@@ -99,6 +99,62 @@ export const getAssets = async (userId) => {
   }
 };
 
+// Create new asset
+export const createAsset = async (assetData) => {
+  try {
+    console.log(' Creating new asset:', assetData);
+    const response = await fetch(`${API_BASE_URL}/assets`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(assetData),
+    });
+    const data = await handleResponse(response);
+    console.log(' Asset created successfully');
+    return data;
+  } catch (error) {
+    console.error(' Error creating asset:', error.message);
+    throw new Error(`Failed to create asset: ${error.message}`);
+  }
+};
+
+// Update asset
+export const updateAsset = async (assetId, assetData) => {
+  try {
+    console.log(` Updating asset ${assetId}:`, assetData);
+    const response = await fetch(`${API_BASE_URL}/assets/${assetId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(assetData),
+    });
+    const data = await handleResponse(response);
+    console.log(' Asset updated successfully');
+    return data;
+  } catch (error) {
+    console.error(' Error updating asset:', error.message);
+    throw new Error(`Failed to update asset: ${error.message}`);
+  }
+};
+
+// Delete asset
+export const deleteAsset = async (assetId) => {
+  try {
+    console.log(` Deleting asset ${assetId}`);
+    const response = await fetch(`${API_BASE_URL}/assets/${assetId}`, {
+      method: 'DELETE',
+    });
+    const data = await handleResponse(response);
+    console.log(' Asset deleted successfully');
+    return data;
+  } catch (error) {
+    console.error(' Error deleting asset:', error.message);
+    throw new Error(`Failed to delete asset: ${error.message}`);
+  }
+};
+
 // Test API connection
 export const testApiConnection = async () => {
   try {
@@ -143,4 +199,12 @@ export const seedEmissionData = async (userId) => {
     console.error(' Error seeding emission data:', error.message);
     throw new Error(`Failed to seed emissions: ${error.message}`);
   }
+};
+
+// Export all asset functions as an object for convenience
+export const assetsAPI = {
+  getAssets,
+  createAsset,
+  updateAsset,
+  deleteAsset
 };
