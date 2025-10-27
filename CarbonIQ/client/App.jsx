@@ -1,5 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
+
 import CarbonIQDashboard from "./pages/Dashboard";
 import MyAssetsPage from "./pages/MyAssets";
 import Sidebar from "./components/Sidebar";
@@ -7,6 +9,9 @@ import Sidebar from "./components/Sidebar";
 function App() {
   return (
     <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+      </Routes>
       <div className="flex min-h-screen bg-gray-50">
         {/* Sidebar - Fixed on the left */}
         <Sidebar />
@@ -28,5 +33,6 @@ function App() {
     </Router>
   );
 }
+
 
 export default App;
