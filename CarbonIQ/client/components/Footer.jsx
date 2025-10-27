@@ -34,10 +34,10 @@ const Footer = () => {
                             </h3>
                             <ul className="space-y-2">
                                 <li className="font-bold text-[14px] leading-[20px] text-[#6e6e6e] hover:text-black transition-colors">
-                                    Features
+                                    <a href="#features">Features</a>
                                 </li>
                                 <li className="font-bold text-[14px] leading-[20px] text-[#6e6e6e] hover:text-black transition-colors">
-                                    How It Works
+                                    <a href="#howitworks">How It Works</a>
                                 </li>
                                 <li className="font-bold text-[14px] leading-[20px] text-[#6e6e6e] hover:text-black transition-colors">
                                     Dashboard
@@ -50,9 +50,9 @@ const Footer = () => {
                             <h3 className="font-bold text-[16px] leading-[23px] text-black mb-3">
                                 Company
                             </h3>
-                            <ul className="space-y-2">
+                            <ul id="contactus" className="space-y-2">
                                 <li className="font-bold text-[14px] leading-[20px] text-[#6e6e6e] hover:text-black transition-colors">
-                                    Contact Us
+                                    <a href="#contactus">Contact Us</a>
                                 </li>
                             </ul>
                         </div>
