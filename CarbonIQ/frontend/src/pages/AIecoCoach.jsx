@@ -1,7 +1,7 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
 
-// Icon imports (Using the paths provided in your code)
+// Icon imports
 const AiEcoCoachIcon = new URL("../assets/icons/aiEcoCoachIcon.svg", import.meta.url).href;
 const LightBulbIcon = new URL("../assets/icons/lightBulb.svg", import.meta.url).href;
 const ExportTrendingDownIcon = new URL("../assets/icons/exportTrendingDown.svg", import.meta.url).href;
@@ -9,9 +9,8 @@ const ProgressionIcon = new URL("../assets/icons/progressionIcon.svg", import.me
 
 const CoachingCard = ({ bgColor, textColor, subColor, icon, title, text }) => (
   <div
-    // Added overflow-hidden to ensure content stays within bounds
-    className="p-6 rounded-xl shadow-lg transition-shadow duration-300 hover:shadow-xl 
-               flex flex-col items-center justify-center h-[180px] cursor-pointer w-full overflow-hidden" 
+    className="w-[288px] h-[144px] p-6 rounded-[8px] shadow-2xl transition-shadow duration-300 hover:shadow-xl 
+               flex flex-col items-center justify-center cursor-pointer overflow-hidden"
     style={{ backgroundColor: bgColor }}
   >
     <img
@@ -30,66 +29,65 @@ const CoachingCard = ({ bgColor, textColor, subColor, icon, title, text }) => (
 
 function AIecoCoach() {
   return (
-    // Uses GRID to define two columns: 16rem for sidebar, 1fr for content.
     <div className="grid grid-cols-[16rem_1fr] min-h-screen bg-white font-sans">
-      
-      {/* Sidebar is in the first column */}
       <Sidebar />
 
-      {/* Main Content Area is in the second column. */}
-      <main className="pt-8 overflow-y-auto bg-[#FFFFFF] px-10">
-        
-        {/* Header Section: Centered and Proportional (max-w-md is fine here) */}
-        <div className="flex flex-col items-center mb-12 max-w-md mx-auto"> 
-          
-          <div className="flex items-center gap-6">
-              {/* AI Eco-Coach Icon Container (Purple/Pink) */}
-              <div className="w-16 h-16 rounded-2xl bg-[#E5B5FF] flex items-center justify-center flex-shrink-0">
-                <img
-                  src={AiEcoCoachIcon}
-                  alt="AI Eco-Coach Icon"
-                  className="w-10 h-10 transition-transform duration-200 hover:scale-110"
-                />
-              </div>
-              
-              {/* Header Text */}
-              <div>
-                <h1 className="text-3xl font-bold text-gray-800">AI Eco-Coach</h1>
-                <p className="text-base text-gray-600">
-                  Get personalized insights and behavioral nudges
-                </p>
-              </div>
+      <main className="pt-8 overflow-y-auto bg-[#F9FAFB] px-10">
+
+        {/* Heading block */}
+        <div className="flex items-center gap-6 max-w-[1000px] mx-auto mb-4">
+          <div className="w-16 h-16 rounded-2xl bg-[#E5B5FF] flex items-center justify-center flex-shrink-0">
+            <img
+              src={AiEcoCoachIcon}
+              alt="AI Eco-Coach Icon"
+              className="w-10 h-10 transition-transform duration-200 hover:scale-110"
+            />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-800">AI Eco-Coach</h1>
+            <p className="text-base text-gray-600">
+              Get personalized insights and behavioral nudges
+            </p>
           </div>
         </div>
 
-        {/* Horizontal Card Layout: Reduced width to max-w-4xl and centered. */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <CoachingCard
-            bgColor="#FEF9C3" 
-            textColor="#867C00"
-            subColor="#A79D21"
-            icon={LightBulbIcon}
-            title="General Tips"
-            text="Get actionable eco-friendly suggestions."
-          />
+        {/* Coaching Cards aligned with heading */}
+        <div className="flex flex-wrap justify-between gap-y-8 px-4 max-w-[1000px] mx-auto mt-[24px]">
+          {/* Card 1: Extra right padding */}
+          <div className="pr-4">
+            <CoachingCard
+              bgColor="#FEF9C3" 
+              textColor="#867C00"
+              subColor="#A79D21"
+              icon={LightBulbIcon}
+              title="General Tips"
+              text="Get actionable eco-friendly suggestions."
+            />
+          </div>
 
-          <CoachingCard
-            bgColor="#DBEAFE" 
-            textColor="#4B5A82"
-            subColor="#8695BD"
-            icon={ExportTrendingDownIcon}
-            title="Reduction Plan"
-            text="Strategies to cut emissions by 20%."
-          />
+          {/* Card 2: Extra right padding */}
+          <div className="pr-4">
+            <CoachingCard
+              bgColor="#DBEAFE" 
+              textColor="#4B5A82"
+              subColor="#8695BD"
+              icon={ExportTrendingDownIcon}
+              title="Reduction Plan"
+              text="Strategies to cut emissions by 20%."
+            />
+          </div>
 
-          <CoachingCard
-            bgColor="#D1FAE5" 
-            textColor="#3E7C64"
-            subColor="#648989"
-            icon={ProgressionIcon}
-            title="Progress Check"
-            text="Assess your avoidable impact."
-          />
+          {/* Card 3: Extra left padding */}
+          <div className="pl-4">
+            <CoachingCard
+              bgColor="#D1FAE5" 
+              textColor="#3E7C64"
+              subColor="#648989"
+              icon={ProgressionIcon}
+              title="Progress Check"
+              text="Assess your avoidable impact."
+            />
+          </div>
         </div>
       </main>
     </div>
