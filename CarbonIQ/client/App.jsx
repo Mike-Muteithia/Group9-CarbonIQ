@@ -1,6 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import CarbonIQDashboard from "./pages/Dashboard";
 import MyAssetsPage from "./pages/MyAssets";
 import Sidebar from "./components/Sidebar";
@@ -11,6 +13,10 @@ function App() {
       <Routes>
         {/* Public route: Landing Page */}
         <Route path="/" element={<LandingPage />} />
+
+        {/* Public route: Signup & Login */}
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
 
         {/* Protected routes */}
         <Route 

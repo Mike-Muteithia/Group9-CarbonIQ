@@ -1,9 +1,24 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 
 
 const Navbar = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        setIsLoggedIn(!!token)
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        setIsLoggedIn(false);
+        navigate("/")   // Redirects to landing page
+    }
+
     return (
         <nav className="bg-white shadow-sm fixed w-full z-50">
             <div className="container mx-auto mr-27 flex justify-between items-center">
@@ -34,18 +49,29 @@ const Navbar = () => {
 
                 {/* CTA Buttons */}
                 <div className="hidden md:flex space-x-3">
-                    <Link 
-                        to="/login" 
-                        className="px-4.5 py-2 border border-green-600 text-green-600 text-[0.80rem] rounded-lg hover:bg-green-600 hover:text-white transition-colors duration-200 hover:scale-110 transition-transform"
-                    >
-                        Log In
-                    </Link>
-                    <Link
-                        to="/signup"
-                        className="px-4.5 py-2 bg-green-600 text-white text-[0.80rem] rounded-lg hover:bg-green-700 transition-colors duration-200 hover:scale-110 transition-transform"
-                    >
-                        Sign Up
-                    </Link>
+                    {isLoggedIn ? (
+                        <button 
+                            onClick={handleLogout}
+                            className="px-4.5 py-2 bg-red-500 text-white text-[0.80rem] rounded-lg hover:bg-red-600 transition-colors duration-200 hover:scale-110 transition-transform"
+                        >
+                            Log Out
+                        </button>
+                    ):(
+                        <>
+                           <Link 
+                                to="/login" 
+                                className="px-4.5 py-2 border border-green-600 text-green-600 text-[0.80rem] rounded-lg hover:bg-green-600 hover:text-white transition-colors duration-200 hover:scale-110 transition-transform"
+                            >
+                                Log In
+                            </Link>
+                            <Link
+                                to="/signup"
+                                className="px-4.5 py-2 bg-green-600 text-white text-[0.80rem] rounded-lg hover:bg-green-700 transition-colors duration-200 hover:scale-110 transition-transform"
+                            >
+                                Sign Up
+                            </Link> 
+                        </>
+                    )}
                 </div>
             </div>
         </nav>

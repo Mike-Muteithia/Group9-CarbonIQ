@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import leafImage from "../assets/leaf.png";
 import movingImage from "../assets/moving.png";
@@ -6,7 +7,10 @@ import vitalImage from "../assets/vital.png";
 import targetImage from "../assets/target.png";
 import { getDashboardStats, getEmissionsTrend, getTopEmitters, getRecentActivities } from '../services/api';
 
+
 export default function CarbonIQDashboard() {
+  const navigate = useNavigate();
+
   // State for all dashboard data
   const [stats, setStats] = useState({
     totalEmission: 0,
@@ -20,8 +24,17 @@ export default function CarbonIQDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // User ID (you can get this from auth context later)
-  const userId = 1;
+  // Checks authenication
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  // Extracts user info if needed
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
 
   // Fetch all dashboard data
   useEffect(() => {

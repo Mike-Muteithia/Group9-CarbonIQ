@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from models import db, User, Asset, Emission, Activity, Goal, MonthlySummary
+from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import func
 from datetime import datetime, timedelta
 import traceback
@@ -1076,3 +1077,128 @@ def get_dashboard_metrics(user_id):
         print(f"❌ Error in dashboard metrics: {str(e)}")
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+    
+
+api = Blueprint("api", __name__)
+
+@api.route("/test-db")
+def test_db():
+    users = User.query.all()
+    return jsonify([u.to_dict() for u in users])
+
+# User Sign-up
+@api.route("/auth/signup", methods=["POST"])
+def signup():
+    data = request.get_json()
+    email = data.get("email")   # Extracts and validates input
+    password = data.get("password") # Extracts and validates input
+
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+    
+    # Check if user already exists
+    existing_user = User.query.filter_by(email=email).first()
+    if existing_user:
+        return jsonify({"error": "Email already registered"}), 400
+
+    # Create and save user
+    new_user = User(
+        name=email.split("@")[0], #Default name from email 
+        email=email
+    )
+    new_user.set_password(password)
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Account created successfully", 
+        "user": new_user.to_dict()
+    }), 201
+
+# User Login
+@api.route("/auth/login", methods=["POST"])
+def login():
+    data = request.get_json()
+    email = data.get("email")
+    password = data.get("password")
+
+    if not email or not password:
+        return jsonify({"error": "Email and password are required"}), 400
+    
+    user = User.query.filter_by(email=email).first()
+
+    if not user or not user.check_password(password):
+        return jsonify({"error": "Invalid email or password"}), 401
+
+    return jsonify({
+        "message": "Login successful", 
+        "user": user.to_dict()
+    }), 200
+
+
+# User auth routes
+# @api.route('/signup', methods=["POST"])
+# def signup():
+#     """Register a new user"""
+#     try:
+#         data = request.get_json()
+#         print(f"Signup data received: {data}")
+
+#         required_fields = ['username', 'email', 'password']
+#         for field in required_fields:
+#             if field in required_fields:
+#                 return jsonify({'error': f'Missing required field: {field}'}), 400
+            
+#         # Checks if email already exists
+#         existing_user = User.query.filter_by(email=data['email']).first()
+#         if existing_user:
+#             return jsonify({'error': 'Email already registered'}), 400
+        
+#         hashed_password = generate_password_hash(data['password'], method='pbkdf2:sha256')
+
+#         new_user = User(
+#             username=data['username'],
+#             email=data['email'],
+#             password=hashed_password
+#         )
+
+#         db.session.add(new_user)
+#         db.session.commit()
+
+#         print(f"New user created: {new_user.to_dict()}")
+#         return jsonify({
+#             'message': 'User created successfully',
+#             'user': new_user.to_dict()
+#         }), 201
+    
+#     except Exception as e:
+#         db.session.rollback()
+#         print(f"Signup error: {str(e)}")
+#         traceback.print_exc()
+#         return jsonify({'error': 'Signup failed. Please try again later.'}), 500
+    
+
+# @api.route('/login', methods=["POST"])
+# def login():
+#     """Authenticate user and return success if credentials match"""
+#     try:
+#         data = request.get_json()
+#         print(f"Login data received: {data}")
+
+#         user = User.query.filter_by(email=data.get('email')).first()
+
+#         if not user or not check_password_hash(user.password, data.get('password')):
+#             print("Invalid email or password")
+#             return jsonify({'error': 'Invalid email or password'}), 401
+
+#         print(f"User authenticated: {user.username}")
+#         return jsonify({
+#             'message': 'Login successful',
+#             'user': user.to_dict()
+#         }), 201
+    
+#     except Exception as e:
+#         print(f"Login error: {str(e)}")
+#         traceback.print_exc()
+#         return jsonify({'error': 'Login failed. Please try again later.'}), 500
