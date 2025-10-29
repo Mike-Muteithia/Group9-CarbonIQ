@@ -29,7 +29,7 @@ const Hero = () => {
                     </p>
 
                     {/* CTA Button */}
-                    <Link to="/signup" className="mt-6 inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md shadow-md font-semibold transition hover:scale-110 transition-transform">
+                    <Link to="/signup" className="mt-6 inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md shadow-md font-semibold .transition hover:scale-110 transition-transform">
                         Get Started
                         <svg
                             xmlns="http://www.w3.org/2000/svg"

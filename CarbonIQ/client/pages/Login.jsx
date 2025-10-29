@@ -34,23 +34,13 @@ const Login = () => {
         password: formData.password,
       });
 
-      // Log the full response to debug
-      console.log("Full login response:", response);
-
-      // Handle different response structures
-      const token = response.token || response.data?.token || response.access_token || response.data?.access_token;
-      const user = response.user || response.data?.user;
-
-      if (!token) {
-        console.error("Response structure:", response);
-        throw new Error("Login failed: No token received from server.");
+      if (!response.token) {
+        throw new Error("Login failed: No token received.");
       }
 
       // Store token and user info
-      localStorage.setItem("token", token);
-      if (user) {
-        localStorage.setItem("user", JSON.stringify(user));
-      }
+      localStorage.setItem("token", response.token);
+      localStorage.setItem("user", JSON.stringify(response.user));
 
       // Redirect to dashboard
       navigate("/dashboard", { replace: true });
@@ -64,7 +54,7 @@ const Login = () => {
   };
 
   return (
-    <div className="bg-[#faffff] flex items-start justify-center min-h-screen pt-10">
+    <div className="bg-[#faffff] flex items-start justify-center">
       <div className="bg-white border p-20 border-[#d3d5d9] shadow rounded-[36px]">
         <div className="flex items-center space-x-[8px] text-[#6b7280] font-jost font-medium text-[18px] leading-[26px]">
           <ArrowLeft className="text-[#1d1b20]" />
@@ -126,7 +116,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="bg-black border w-95 p-3 mt-5 border-[#c4c4c4] rounded-md text-white font-jost font-bold text-[16px] hover:bg-gray-900 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-black border w-95 p-3 mt-5 border-[#c4c4c4] rounded-md text-white font-jost font-bold text-[16px] hover:bg-gray-900 transition duration-200"
             >
               {loading ? "Logging in..." : "Log In"}
             </button>

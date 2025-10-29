@@ -189,7 +189,7 @@ export default function CarbonIQDashboard() {
         {/* Charts Section */}
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
           {/* Emissions Trend Chart */}
-          <div className="flex-[2] bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
+          <div className=".flex-[2] bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Emissions Trend (Last 30 Days)
             </h2>
@@ -238,7 +238,7 @@ export default function CarbonIQDashboard() {
             <h2 className="text-lg font-semibold text-gray-900 mb-6">Top Emitters</h2>
             {topEmittersData.length > 0 ? (
               <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                <div className="w-48 h-48 flex-shrink-0">
+                <div className="w-48 h-48 .flex-shrink-0">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie 
@@ -262,7 +262,7 @@ export default function CarbonIQDashboard() {
                   {topEmittersData.map((item, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <div 
-                        className="w-4 h-4 rounded-sm flex-shrink-0" 
+                        className="w-4 h-4 rounded-sm .flex-shrink-0" 
                         style={{ backgroundColor: item.color }} 
                       />
                       <span className="text-gray-700 text-sm">
@@ -288,7 +288,7 @@ export default function CarbonIQDashboard() {
               {recentActivities.map((activity, index) => (
                 <div key={activity.id || index} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
                   <div className="flex items-center gap-4 flex-1">
-                    <div className={`w-10 h-10 ${activity.iconBg || 'bg-blue-500'} rounded-full flex items-center justify-center text-white text-xl flex-shrink-0`}>
+                    <div className={`w-10 h-10 ${activity.iconBg || 'bg-blue-500'} rounded-full flex items-center justify-center text-white text-xl .flex-shrink-0`}>
                       {activity.icon || '📝'}
                     </div>
                     <div className="flex-1">
