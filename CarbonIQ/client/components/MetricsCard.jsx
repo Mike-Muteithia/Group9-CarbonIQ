@@ -1,20 +1,16 @@
 import { useState, useEffect } from 'react';
+import { getDashboardStats } from '../services/api';
 
 function MetricsCard({ userId }) {
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // TEMPORARY FIX - Replace your current useEffect with this one
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
         console.log('📊 Fetching dashboard stats for metrics');
-        const response = await fetch(`/api/dashboard/stats/${userId}`);
-        
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        
-        const data = await response.json();
+        const data = await getDashboardStats(userId);
         console.log('📈 Dashboard stats:', data);
         
         // Use the enhancedData from dashboard stats

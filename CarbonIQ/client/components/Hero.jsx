@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import hero from "../assets/hero.png";
 
 
@@ -28,7 +29,7 @@ const Hero = () => {
                     </p>
 
                     {/* CTA Button */}
-                    <button className="mt-6 inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md shadow-md font-semibold transition">
+                    <Link to="/signup" className="mt-6 inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-md shadow-md font-semibold transition hover:scale-110 transition-transform">
                         Get Started
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -44,7 +45,7 @@ const Hero = () => {
                                 d="M5 12h14m-7-7l7 7-7 7"
                             />
                         </svg>
-                    </button>
+                    </Link>
                 </div>
             </div>
         </section>

@@ -1,62 +1,139 @@
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from datetime import timedelta
+from werkzeug.security import check_password_hash, generate_password_hash
+import jwt
+import datetime
+import os
+from functools import wraps
+
+# Import database and User model
 from models import db, User
-from extensions import bcrypt
 
+auth_bp = Blueprint('auth', __name__)
 
-auth_bp = Blueprint("auth_bp", __name__)
+# Get SECRET_KEY from environment variable
+SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key')
 
-# Signup route
-@auth_bp.route("/auth/signup", methods=["POST"])
-def signup():
-    data = request.get_json()
-    email = data.get("email")
-    password = data.get("password")
-
-    if not email or not password:
-        return jsonify({"error": "Email and password required"}), 400
-    
-    existing_user = User.query.filter_by(email=email).first()
-    if existing_user:
-        return jsonify({"error": "User already exists"}), 400
-    
-    hashed_pw = bcrypt.generate_password_hash(password).decode("utf-8")
-    new_user = User(email=email, password=hashed_pw)
-    db.session.add(new_user)
-    db.session.commit()
-
-    token = create_access_token(identity=email, expires_delta=timedelta(hours=12))
-
-    return jsonify({
-        "message": "Account created successfully",
-        "token": token,
-        "user": {"email": email}
-    }), 201
-
-# Login route
-@auth_bp.route("/auth/login", methods=["POST"])
+@auth_bp.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    email = data.get("email")
-    password = data.get("password")
+    try:
+        data = request.get_json()
+        
+        # Validate input
+        if not data or not data.get('email') or not data.get('password'):
+            return jsonify({'error': 'Email and password are required'}), 400
+        
+        email = data.get('email')
+        password = data.get('password')
+        
+        # Find user in database
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            return jsonify({'error': 'Invalid email or password'}), 401
+        
+        # Verify password using the User model's method
+        if not user.check_password(password):
+            return jsonify({'error': 'Invalid email or password'}), 401
+        
+        # Generate JWT token
+        token = jwt.encode({
+            'user_id': user.id,
+            'email': user.email,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        }, SECRET_KEY, algorithm='HS256')
+        
+        # Return token and user data
+        return jsonify({
+            'token': token,
+            'user': user.to_dict()
+        }), 200
+        
+    except Exception as e:
+        print(f"Login error: {str(e)}")
+        return jsonify({'error': 'An error occurred during login'}), 500
 
-    user = User.query.filter_by(email=email).first()
-    if not user or not bcrypt.check_password_hash(user.password, password):
-        return jsonify({"error": "Invalid email and password"}), 401
+
+@auth_bp.route('/signup', methods=['POST'])
+def signup():
+    try:
+        data = request.get_json()
+        
+        # Validate input
+        if not data or not data.get('email') or not data.get('password'):
+            return jsonify({'error': 'Email and password are required'}), 400
+        
+        email = data.get('email')
+        password = data.get('password')
+        name = data.get('name', email.split('@')[0])
+        
+        # Check if user already exists
+        if User.query.filter_by(email=email).first():
+            return jsonify({'error': 'Email already registered'}), 409
+        
+        # Create new user
+        new_user = User(
+            email=email,
+            name=name
+        )
+        new_user.set_password(password)  # Use the model's method to hash password
+        
+        db.session.add(new_user)
+        db.session.commit()
+        
+        # Generate token for immediate login after signup
+        token = jwt.encode({
+            'user_id': new_user.id,
+            'email': new_user.email,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
+        }, SECRET_KEY, algorithm='HS256')
+        
+        return jsonify({
+            'message': 'Account created successfully',
+            'token': token,
+            'user': new_user.to_dict()
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Signup error: {str(e)}")
+        return jsonify({'error': 'An error occurred during signup'}), 500
+
+
+# Middleware to protect routes that require authentication
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        
+        if not token:
+            return jsonify({'error': 'Token is missing'}), 401
+        
+        try:
+            # Remove 'Bearer ' prefix if present
+            if token.startswith('Bearer '):
+                token = token[7:]
+            
+            data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+            current_user = User.query.get(data['user_id'])
+            
+            if not current_user:
+                return jsonify({'error': 'User not found'}), 401
+                
+        except jwt.ExpiredSignatureError:
+            return jsonify({'error': 'Token has expired'}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({'error': 'Invalid token'}), 401
+        
+        return f(current_user, *args, **kwargs)
     
-    token = create_access_token(identity=email, expires_delta=timedelta(hours=12))
-
-    return jsonify({
-        "message": "Login successful",
-        "token": token,
-        "user": {"email": email}
-    }), 200
+    return decorated
 
 
 # Example protected route
-@auth_bp.route("/auth/protected", methods=["GET"])
-@jwt_required()
-def protected():
-    current_user = get_jwt_identity()
-    return jsonify({"message": f"Welcome, {current_user}! This route is protected. "}), 200
+@auth_bp.route('/verify', methods=['GET'])
+@token_required
+def verify_token(current_user):
+    return jsonify({
+        'valid': True,
+        'user': current_user.to_dict()
+    }), 200

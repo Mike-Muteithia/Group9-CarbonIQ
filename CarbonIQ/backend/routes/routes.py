@@ -1089,9 +1089,13 @@ def test_db():
 # User Sign-up
 @api.route("/auth/signup", methods=["POST"])
 def signup():
+    import jwt
+    import datetime
+    import os
+    
     data = request.get_json()
-    email = data.get("email")   # Extracts and validates input
-    password = data.get("password") # Extracts and validates input
+    email = data.get("email")
+    password = data.get("password")
 
     if not email or not password:
         return jsonify({"error": "Email and password are required"}), 400
@@ -1103,7 +1107,7 @@ def signup():
 
     # Create and save user
     new_user = User(
-        name=email.split("@")[0], #Default name from email 
+        name=email.split("@")[0],
         email=email
     )
     new_user.set_password(password)
@@ -1111,14 +1115,28 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
 
+    # Generate JWT token for auto-login after signup
+    SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key')
+    token = jwt.encode({
+        'user_id': new_user.id,
+        'email': new_user.email,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
+    }, SECRET_KEY, algorithm='HS256')
+
     return jsonify({
-        "message": "Account created successfully", 
+        "message": "Account created successfully",
+        "token": token,
         "user": new_user.to_dict()
     }), 201
+
 
 # User Login
 @api.route("/auth/login", methods=["POST"])
 def login():
+    import jwt
+    import datetime
+    import os
+    
     data = request.get_json()
     email = data.get("email")
     password = data.get("password")
@@ -1131,11 +1149,19 @@ def login():
     if not user or not user.check_password(password):
         return jsonify({"error": "Invalid email or password"}), 401
 
+    # Generate JWT token
+    SECRET_KEY = os.getenv('SECRET_KEY', 'fallback-secret-key')
+    token = jwt.encode({
+        'user_id': user.id,
+        'email': user.email,
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(days=7)
+    }, SECRET_KEY, algorithm='HS256')
+
     return jsonify({
-        "message": "Login successful", 
+        "message": "Login successful",
+        "token": token,
         "user": user.to_dict()
     }), 200
-
 
 # User auth routes
 # @api.route('/signup', methods=["POST"])

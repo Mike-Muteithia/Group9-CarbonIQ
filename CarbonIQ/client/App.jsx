@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import CarbonIQDashboard from "./pages/Dashboard";
 import MyAssetsPage from "./pages/MyAssets";
 import Sidebar from "./components/Sidebar";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -22,24 +23,28 @@ function App() {
         <Route 
           path="/dashboard"
           element={
-            <div className="flex min-h-screen bg-gray-50">
-              <Sidebar />
-              <main className="flex-1 ml-64 pl-4 pr-8 py-4">
-                <CarbonIQDashboard />
-              </main>
-            </div>
+            <ProtectedRoute>
+              <div className="flex min-h-screen bg-gray-50">
+                <Sidebar />
+                <main className="flex-1 ml-64 pl-4 pr-8 py-4">
+                  <CarbonIQDashboard />
+                </main>
+              </div>
+            </ProtectedRoute>
           }
         />
 
         <Route 
           path="/assets"
           element={
-            <div className="flex min-h-screen bg-gray-50">
-              <Sidebar />
-              <main className="flex-1 ml-64 pl-4 pr-8 py-4">
-                <MyAssetsPage />
-              </main>
-            </div>
+            <ProtectedRoute>
+              <div className="flex min-h-screen bg-gray-50">
+                <Sidebar />
+                <main className="flex-1 ml-64 pl-4 pr-8 py-4">
+                  <MyAssetsPage />
+                </main>
+              </div>
+            </ProtectedRoute>
           }
         />
       </Routes>

@@ -1,8 +1,12 @@
+from dotenv import load_dotenv
+load_dotenv()
+
 from flask import Flask, jsonify
 from flask_cors import CORS
 from extensions import bcrypt, jwt
 from models import db
 from routes.routes import api  # Existing app routes
+from routes.dashboard_routes import dashboard_bp
 import os
 
 # Initialize Flask app
@@ -29,6 +33,7 @@ jwt.init_app(app)
 
 # Register API routes
 app.register_blueprint(api)
+app.register_blueprint(dashboard_bp)
 
 # Registers new auth routes
 from routes.auth_routes import auth_bp
