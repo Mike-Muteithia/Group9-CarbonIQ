@@ -1,38 +1,54 @@
-import React from 'react';
-import { Edit3, Trash2, CheckCircle } from 'lucide-react';
+import React from "react";
+import goalIcon from "../assets/icons/goal.svg";
+import pencilIcon from "../assets/icons/pencil.svg";
+import deleteIcon from "../assets/icons/delete.svg";
 
-const GoalCard = ({ goal }) => {
+const GoalCard = ({ title, description, start, end, targetCo2, progressCo2, percent, onEdit, onDelete }) => {
+  const numericPercent = parseFloat(percent.replace("%", ""));
+
   return (
-    <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition">
-      <div className="flex justify-between items-start mb-3">
-        <div className="flex items-center gap-2">
-          <CheckCircle size={18} className="text-green-600" />
-          <h2 className="text-lg font-semibold text-gray-800">{goal.title}</h2>
-          <span className="bg-green-100 text-green-700 text-xs font-semibold px-2 py-1 rounded-full">
-            Active
-          </span>
+    <div className="bg-white w-full max-w-[850px] mx-auto rounded-[14px] border-2 border-gray-200 shadow-2xl px-6 py-6">
+      <div className="flex justify-between items-start mb-4">
+        <div className="flex items-start gap-3">
+          <div className="w-9 h-9 flex items-center justify-center rounded-[14px] bg-[#CBFFE0] mt-1">
+            <img src={goalIcon} alt="Goal Icon" className="w-5 h-5" />
+          </div>
+          <div className="flex flex-col">
+            <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+            <span className="bg-[#CBFFE0] text-green-700 text-xs font-medium px-3 py-0.5 rounded-[24px] w-fit mt-1">
+              Active
+            </span>
+            <p className="mt-3 text-sm text-gray-800 max-w-4xl">{description}</p>
+          </div>
         </div>
-        <div className="flex gap-3 text-gray-500">
-          <Edit3 className="cursor-pointer hover:text-green-600" size={18} />
-          <Trash2 className="cursor-pointer hover:text-red-600" size={18} />
+        <div className="flex gap-2 mt-1">
+          <img src={pencilIcon} alt="Edit" className="w-5 h-5 cursor-pointer" onClick={onEdit} />
+<img src={deleteIcon} alt="Delete" className="w-5 h-5 cursor-pointer" onClick={onDelete} />
+
         </div>
       </div>
 
-      <p className="text-gray-600 text-sm mb-4">{goal.description}</p>
-
-      <div className="text-sm text-gray-700 mb-2">Progress</div>
-      <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
-        <div
-          className="bg-green-500 h-2 rounded-full"
-          style={{ width: `${goal.progress}%` }}
-        ></div>
-      </div>
-
-      <div className="flex justify-between text-xs text-gray-500">
-        <p>Started: {goal.startDate}</p>
-        <p>
-          {goal.emissionTarget} &nbsp; | &nbsp; Target: {goal.targetDate}
-        </p>
+      <div className="flex justify-between items-end mt-4 ml-12">
+        <div className="flex-1">
+          <div className="flex justify-between text-sm text-gray-700 mb-1">
+            <span>Target Reduction</span>
+            <span className="font-semibold text-gray-900">{targetCo2}</span>
+          </div>
+          <div className="flex justify-between text-sm text-gray-700 mb-2">
+            <span>Progress</span>
+            <span className="font-semibold text-[#0D4BD3]">{progressCo2}</span>
+          </div>
+          <div className="bg-gray-300 w-full h-2 rounded-full overflow-hidden mb-2">
+            <div
+              className="bg-[#40CD74] h-full rounded-full transition-all duration-700 ease-in-out"
+              style={{ width: `${numericPercent}%` }}
+            />
+          </div>
+          <div className="flex justify-between text-xs text-gray-600 mt-2">
+            <span>Started: {start}</span>
+            <span>Target: {end}</span>
+          </div>
+        </div>
       </div>
     </div>
   );

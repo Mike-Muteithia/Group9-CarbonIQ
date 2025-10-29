@@ -10,13 +10,13 @@ export default {
         jost: ['Jost', 'sans-serif'],
       },
       colors: {
-        carbonGreen: '#16A34A',     // Impact summary, buttons
-        carbonYellow: '#FFFFA1',    // CoachCard background
-        carbonGray: '#F5F5F5',      // Page background
-        carbonText: '#1F2937',      // Default text
+        carbonGreen: '#16A34A',
+        carbonYellow: '#FFFFA1',
+        carbonGray: '#F5F5F5',
+        carbonText: '#1F2937',
       },
       spacing: {
-        'sidebar': '16rem',         // Sidebar width
+        'sidebar': '16rem',
       },
       borderRadius: {
         'xl': '1rem',

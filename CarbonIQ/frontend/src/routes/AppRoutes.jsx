@@ -1,17 +1,15 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import AIecoCoach from "../pages/AIecoCoach";
-import EmissionGoals from "../pages/EmissionGoals";
+import { Routes, Route } from 'react-router-dom';
+import Layout from '../Layout';
+import AIEcoCoach from '../pages/AIEcoCoach';
+import Emission from '../pages/Emission';
 
-const AppRoutes = () => {
+export default function AppRoutes() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<EmissionGoals />} />
-        <Route path="/AIecoCoach" element={<AIecoCoach />} />
-      </Routes>
-    </Router>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route path="ecocoach" element={<AIEcoCoach />} />
+        <Route path="emission" element={<Emission />} />
+      </Route>
+    </Routes>
   );
-};
-
-export default AppRoutes;
+}
