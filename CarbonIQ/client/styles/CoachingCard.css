@@ -1,0 +1,32 @@
+.coaching-card {
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.coaching-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.coaching-card h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #1A1A1A;
+}
+
+.coaching-card p {
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.coaching-card-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 12px;
+}
