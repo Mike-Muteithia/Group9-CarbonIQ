@@ -44,7 +44,7 @@ app.register_blueprint(ai_bp)  # AI EcoCoach routes
 app.register_blueprint(goal_bp)  # Goals routes
 
 # Registers new auth routes
-from routes.auth_routes import auth_bp
+from backend.routes.auth_routes import auth_bp
 app.register_blueprint(auth_bp)
 
 
