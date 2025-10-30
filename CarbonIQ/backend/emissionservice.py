@@ -1,6 +1,10 @@
 from datetime import datetime, timedelta
 from sqlalchemy import func, extract
+import logging
 from backend.models import db, Emission, MonthlySummary
+
+# Configure logging
+logger = logging.getLogger(__name__)
 
 class EmissionService:
     
@@ -44,7 +48,7 @@ class EmissionService:
                 return original_value  # Assume value is already in kg CO2
                 
         except Exception as e:
-            print(f"Calculation error: {e}")
+            logger.error(f"Emission calculation error: {e}")
             return 0.0
     
     @staticmethod
