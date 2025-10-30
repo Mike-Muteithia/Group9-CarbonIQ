@@ -3,6 +3,7 @@ load_dotenv()
 
 from flask import Flask, jsonify
 from flask_cors import CORS
+
 from extensions import bcrypt, jwt
 from models import db
 from routes.routes import api  # Existing app routes
@@ -18,10 +19,10 @@ app = Flask(__name__)
 CORS(app)            # Enable frontend (React/Vite) communication
 
 # Secret key for security
-app.config['SECRET_KEY'] = 'my_secret_key'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'e4b74003ea8a79e8762bc5a01ae88b37e52b19685acf6207ff177d0777f44181')
 
 # Adds JWT secret key
-app.config['JWT_SECRET_KEY'] = 'supersecretkey' # Change this before deployment!
+app.config['JWT_SECRET_KEY'] = os.getenv('SECRET_KEY', 'e4b74003ea8a79e8762bc5a01ae88b37e52b19685acf6207ff177d0777f44181') # Change this before deployment!
 
 # Database configuration (SQLite file stored in the project directory)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
