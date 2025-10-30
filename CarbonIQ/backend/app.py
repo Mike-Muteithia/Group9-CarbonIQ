@@ -28,7 +28,7 @@ app.config['JWT_SECRET_KEY'] = os.getenv('SECRET_KEY', 'e4b74003ea8a79e8762bc5a0
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 db_path = os.path.join(BASE_DIR, "carboniq.db")
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'postgresql://username:password@localhost/carboniq_db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'psycopg+postgresql://username:password@localhost/carboniq_db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database
