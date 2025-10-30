@@ -124,7 +124,7 @@ export default function CarbonIQDashboard() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Emission</p>
-                <p className="text-3xl font-bold text-gray-900">{stats.totalEmission || 0} kg</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalEmission || 0} kg</p>
                 <p className="text-xs text-gray-500 mt-1">CO₂ equivalent</p>
               </div>
               <div className="bg-green-100 p-2 rounded-lg">
@@ -137,7 +137,7 @@ export default function CarbonIQDashboard() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">This Month</p>
-                <p className="text-3xl font-bold text-gray-900">{stats.thisMonth || 0} kg</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.thisMonth || 0} kg</p>
                 <p className="text-xs text-gray-500 mt-1">Monthly emissions</p>
               </div>
               <div className="bg-green-100 p-2 rounded-lg">
@@ -150,7 +150,7 @@ export default function CarbonIQDashboard() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Activities Logged</p>
-                <p className="text-3xl font-bold text-gray-900">{stats.activitiesLogged || 0}</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.activitiesLogged || 0}</p>
                 <p className="text-xs text-gray-500 mt-1">This month</p>
               </div>
               <div className="bg-green-100 p-2 rounded-lg">
@@ -163,7 +163,7 @@ export default function CarbonIQDashboard() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Active Goals</p>
-                <p className="text-3xl font-bold text-gray-900">{stats.activeGoals || 0}</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.activeGoals || 0}</p>
                 <p className="text-xs text-gray-500 mt-1">Reduction targets</p>
               </div>
               <div className="bg-green-100 p-2 rounded-lg">
