@@ -4,13 +4,13 @@ load_dotenv()
 from flask import Flask, jsonify
 from flask_cors import CORS
 from backend.extensions import bcrypt, jwt
-from models import db
-from routes.routes import api  # Existing app routes
-from routes.dashboard_routes import dashboard_bp
-from routes.asset_routes import asset_bp
-from routes.activity_routes import activity_bp
-from routes.ai_routes import ai_bp
-from routes.goal_routes import goal_bp
+from backend.models import db
+from backend.routes.routes import api  # Existing app routes
+from backend.routes.dashboard_routes import dashboard_bp
+from backend.routes.asset_routes import asset_bp
+from backend.routes.activity_routes import activity_bp
+from backend.routes.ai_routes import ai_bp
+from backend.routes.goal_routes import goal_bp
 import os
 
 # Initialize Flask app
