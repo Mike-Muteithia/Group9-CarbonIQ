@@ -128,4 +128,4 @@ if __name__ == '__main__':
         print(" Database (SQLite) tables created successfully!")
 
     print("\n Running CarbonIQ Backend on http://localhost:5000\n")
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
