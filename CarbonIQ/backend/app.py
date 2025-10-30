@@ -139,5 +139,5 @@ if __name__ == '__main__':
         db.create_all()
         print("Database (SQLite) tables created successfully!")
 
-    print(f"\nRunning CarbonIQ Backend on http://localhost:5000 (Environment: {os.environ.get('FLASK_ENV', 'development')})\n")
+    print(f"\nRunning CarbonIQ Backend on https://group9-carboniq.onrender.com (Environment: {os.environ.get('FLASK_ENV', 'development')})\n")
     app.run(debug=app.config.get('DEBUG', False))

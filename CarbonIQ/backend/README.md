@@ -51,7 +51,7 @@ FLASK_ENV=development
 SECRET_KEY=dev-secret-key
 JWT_SECRET_KEY=dev-jwt-secret
 DATABASE_URL=sqlite:///carboniq.db
-CORS_ORIGINS=http://localhost:3000
+CORS_ORIGINS=https://group9-carboniq.onrender.com
 ```
 
 ## API Endpoints

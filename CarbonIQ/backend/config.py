@@ -11,7 +11,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # CORS settings
-    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'https://group9-carboniq.onrender.com,http://localhost:3000').split(',')
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'https://group9-carboniq.onrender.com').split(',')
     
     # Pagination
     ITEMS_PER_PAGE = 20
