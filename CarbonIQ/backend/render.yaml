@@ -17,7 +17,7 @@ services:
           name: carboniq-db
           property: connectionString
       - key: CORS_ORIGINS
-        value: https://your-frontend-domain.com
+        value: https://group9-carboniq.onrender.com
 
 databases:
   - name: carboniq-db
