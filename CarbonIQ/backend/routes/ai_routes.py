@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import db, User, Emission, Activity
+from backend.models import db, User, Emission, Activity
 from utils.ai_helper import AIEcoCoach, get_daily_tip, analyze_emission_trend
 from datetime import datetime, timedelta
 import traceback

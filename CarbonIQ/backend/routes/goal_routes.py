@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import db, User, Goal, Emission
+from backend.models import db, User, Goal, Emission
 from datetime import datetime, timedelta
 import traceback
 

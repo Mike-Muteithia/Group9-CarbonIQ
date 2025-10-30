@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import db, Activity, Emission, User, Asset
+from backend.models import db, Activity, Emission, User, Asset
 from utils.carbon_calculator import CarbonCalculator
 from datetime import datetime
 import traceback

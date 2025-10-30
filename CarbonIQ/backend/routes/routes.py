@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from models import db, User, Asset, Emission, Activity, Goal, MonthlySummary
+from backend.models import db, User, Asset, Emission, Activity, Goal, MonthlySummary
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import func
 from datetime import datetime, timedelta
