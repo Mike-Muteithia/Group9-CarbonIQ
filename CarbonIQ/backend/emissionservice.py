@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 from sqlalchemy import func, extract
-from models import db, Emission, MonthlySummary
+from backend.models import db, Emission, MonthlySummary
 
 class EmissionService:
     
