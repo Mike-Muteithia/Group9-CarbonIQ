@@ -11,7 +11,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     
     # CORS settings
-    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'https://group9-carbon-iq-8hdo.vercel.app,https://group9-carboniq.onrender.com').split(',')
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'https://group9-carbon-iq.vercel.app,https://group9-carboniq.onrender.com').split(',')
     
     # Pagination
     ITEMS_PER_PAGE = 20
@@ -29,7 +29,7 @@ class ProductionConfig(Config):
         'sqlite:///' + os.path.join(os.path.abspath(os.path.dirname(__file__)), 'carboniq.db')
     
     # Override CORS for production - allow deployed frontend domains
-    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'https://group9-carbon-iq-8hdo.vercel.app,https://group9-carboniq.onrender.com').split(',')
+    CORS_ORIGINS = os.environ.get('CORS_ORIGINS', 'https://group9-carbon-iq.vercel.app,https://group9-carboniq.onrender.com').split(',')
     
     # Security headers
     SECURITY_HEADERS = {
