@@ -16,11 +16,11 @@ python app.py
 Expected output:
 ```
 ✅ Database (SQLite) tables created successfully!
-🚀 Running CarbonIQ Backend on http://localhost:5000
+🚀 Running CarbonIQ Backend on https://group9-carboniq.onrender.com
 ```
 
 ### 3. Verify Backend is Running
-Visit: http://localhost:5000
+Visit: https://group9-carboniq.onrender.com
 
 Expected response:
 ```json
@@ -39,7 +39,7 @@ Expected response:
 
 #### 1. Dashboard Stats
 ```bash
-GET http://localhost:5000/api/dashboard/stats/1
+GET https://group9-carboniq.onrender.com/api/dashboard/stats/1
 ```
 **Expected Response**:
 ```json
@@ -54,7 +54,7 @@ GET http://localhost:5000/api/dashboard/stats/1
 
 #### 2. Emissions Trend
 ```bash
-GET http://localhost:5000/api/dashboard/emissions-trend/1?days=30
+GET https://group9-carboniq.onrender.com/api/dashboard/emissions-trend/1?days=30
 ```
 **Expected Response**:
 ```json
@@ -66,7 +66,7 @@ GET http://localhost:5000/api/dashboard/emissions-trend/1?days=30
 
 #### 3. Top Emitters
 ```bash
-GET http://localhost:5000/api/dashboard/top-emitters/1
+GET https://group9-carboniq.onrender.com/api/dashboard/top-emitters/1
 ```
 **Expected Response**:
 ```json
@@ -78,7 +78,7 @@ GET http://localhost:5000/api/dashboard/top-emitters/1
 
 #### 4. Recent Activities
 ```bash
-GET http://localhost:5000/api/dashboard/recent-activities/1?limit=10
+GET https://group9-carboniq.onrender.com/api/dashboard/recent-activities/1?limit=10
 ```
 **Expected Response**:
 ```json
@@ -99,7 +99,7 @@ GET http://localhost:5000/api/dashboard/recent-activities/1?limit=10
 
 #### 5. AI Insights
 ```bash
-GET http://localhost:5000/api/dashboard/insights/1
+GET https://group9-carboniq.onrender.com/api/dashboard/insights/1
 ```
 **Expected Response**:
 ```json
@@ -115,7 +115,7 @@ GET http://localhost:5000/api/dashboard/insights/1
 
 #### 1. Get All Assets
 ```bash
-GET http://localhost:5000/api/assets/1
+GET https://group9-carboniq.onrender.com/api/assets/1
 ```
 **Expected Response**:
 ```json
@@ -136,7 +136,7 @@ GET http://localhost:5000/api/assets/1
 
 #### 2. Create Asset
 ```bash
-POST http://localhost:5000/api/assets
+POST https://group9-carboniq.onrender.com/api/assets
 Content-Type: application/json
 
 {
@@ -159,7 +159,7 @@ Content-Type: application/json
 
 #### 3. Update Asset
 ```bash
-PUT http://localhost:5000/api/assets/1
+PUT https://group9-carboniq.onrender.com/api/assets/1
 Content-Type: application/json
 
 {
@@ -177,7 +177,7 @@ Content-Type: application/json
 
 #### 4. Delete Asset
 ```bash
-DELETE http://localhost:5000/api/assets/1
+DELETE https://group9-carboniq.onrender.com/api/assets/1
 ```
 **Expected Response**:
 ```json
@@ -205,7 +205,7 @@ npm run dev
 - [ ] Confirm top emitters pie chart shows
 - [ ] Check recent activities list displays
 
-**Dashboard URL**: http://localhost:5173/dashboard
+**Dashboard URL**: https://group9-carboniq.onrender.com/dashboard
 
 ### 3. My Assets Page Tests
 - [ ] Navigate to `/my-assets`
@@ -218,7 +218,7 @@ npm run dev
 - [ ] Click delete icon and confirm deletion
 - [ ] Verify asset is removed from grid
 
-**My Assets URL**: http://localhost:5173/my-assets
+**My Assets URL**: https://group9-carboniq.onrender.com/my-assets
 
 ---
 
@@ -230,7 +230,7 @@ npm run dev
 ### Issue 2: Empty data on dashboard
 **Solution**: Use the seed data endpoint to populate test data:
 ```bash
-POST http://localhost:5000/api/seed-data/1
+POST https://group9-carboniq.onrender.com/api/seed-data/1
 ```
 
 ### Issue 3: OpenAI insights not working
@@ -304,22 +304,22 @@ with app.app_context():
 
 ### Test Backend Health
 ```bash
-curl http://localhost:5000/health
+curl https://group9-carboniq.onrender.com/health
 ```
 
 ### Test Database Connection
 ```bash
-curl http://localhost:5000/api/test-db
+curl https://group9-carboniq.onrender.com/api/test-db
 ```
 
 ### Test Dashboard Stats (replace user_id)
 ```bash
-curl http://localhost:5000/api/dashboard/stats/1
+curl https://group9-carboniq.onrender.com/api/dashboard/stats/1
 ```
 
 ### Test Assets Endpoint (replace user_id)
 ```bash
-curl http://localhost:5000/api/assets/1
+curl https://group9-carboniq.onrender.com/api/assets/1
 ```
 
 ---
