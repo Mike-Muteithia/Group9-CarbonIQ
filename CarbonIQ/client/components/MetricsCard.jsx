@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getDashboardMetrics } from '../services/api';
+import { getDashboardStats } from '../services/api';
 
 function MetricsCard({ userId }) {
   const [metrics, setMetrics] = useState(null);
@@ -18,7 +18,7 @@ function MetricsCard({ userId }) {
         console.log(`📊 Fetching metrics for user ${userId}`);
         
         // USE THE IMPORTED API SERVICE INSTEAD OF DIRECT FETCH
-        const data = await getDashboardMetrics(userId);
+        const data = await getDashboardStats(userId);
         console.log('✅ Metrics data received:', data);
 
         if (data.success && data.enhancedData) {

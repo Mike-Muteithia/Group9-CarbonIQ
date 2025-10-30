@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import leafImage from "../assets/leaf.png";
 import movingImage from "../assets/moving.png";
@@ -6,7 +7,10 @@ import vitalImage from "../assets/vital.png";
 import targetImage from "../assets/target.png";
 import { getDashboardStats, getEmissionsTrend, getTopEmitters, getRecentActivities } from '../services/api';
 
+
 export default function CarbonIQDashboard() {
+  const navigate = useNavigate();
+
   // State for all dashboard data
   const [stats, setStats] = useState({
     totalEmission: 0,
@@ -20,8 +24,17 @@ export default function CarbonIQDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // User ID (you can get this from auth context later)
-  const userId = 1;
+  // Checks authenication
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  // Extracts user info if needed
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
 
   // Fetch all dashboard data
   useEffect(() => {
@@ -120,7 +133,7 @@ export default function CarbonIQDashboard() {
 
         {/* Stats Cards - Now using real data */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Total Emission</p>
@@ -133,7 +146,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">This Month</p>
@@ -146,7 +159,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Activities Logged</p>
@@ -159,7 +172,7 @@ export default function CarbonIQDashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-gray-600 mb-1">Active Goals</p>
@@ -176,7 +189,7 @@ export default function CarbonIQDashboard() {
         {/* Charts Section */}
         <div className="flex flex-col lg:flex-row gap-6 mb-8">
           {/* Emissions Trend Chart */}
-          <div className="flex-[2] bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className=".flex-[2] bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">
               Emissions Trend (Last 30 Days)
             </h2>
@@ -221,11 +234,11 @@ export default function CarbonIQDashboard() {
           </div>
 
           {/* Top Emitters Pie Chart */}
-          <div className="flex-1 bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+          <div className="flex-1 bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
             <h2 className="text-lg font-semibold text-gray-900 mb-6">Top Emitters</h2>
             {topEmittersData.length > 0 ? (
               <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-                <div className="w-48 h-48 flex-shrink-0">
+                <div className="w-48 h-48 .flex-shrink-0">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie 
@@ -249,7 +262,7 @@ export default function CarbonIQDashboard() {
                   {topEmittersData.map((item, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <div 
-                        className="w-4 h-4 rounded-sm flex-shrink-0" 
+                        className="w-4 h-4 rounded-sm .flex-shrink-0" 
                         style={{ backgroundColor: item.color }} 
                       />
                       <span className="text-gray-700 text-sm">
@@ -268,14 +281,14 @@ export default function CarbonIQDashboard() {
         </div>
 
         {/* Recent Activities */}
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200">
+        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 hover:scale-105 transition-transform duration-300">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Activities</h2>
           {recentActivities.length > 0 ? (
             <div className="space-y-4">
               {recentActivities.map((activity, index) => (
                 <div key={activity.id || index} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-0">
                   <div className="flex items-center gap-4 flex-1">
-                    <div className={`w-10 h-10 ${activity.iconBg || 'bg-blue-500'} rounded-full flex items-center justify-center text-white text-xl flex-shrink-0`}>
+                    <div className={`w-10 h-10 ${activity.iconBg || 'bg-blue-500'} rounded-full flex items-center justify-center text-white text-xl .flex-shrink-0`}>
                       {activity.icon || '📝'}
                     </div>
                     <div className="flex-1">

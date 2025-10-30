@@ -14,18 +14,21 @@ class User(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Hash the password when setting it
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    # Check the password during login
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+
     # Relationships
     assets = db.relationship("Asset", backref="user", lazy=True, cascade="all, delete-orphan")
     emissions = db.relationship("Emission", backref="user", lazy=True, cascade="all, delete-orphan")
     activities = db.relationship("Activity", backref="user", lazy=True, cascade="all, delete-orphan")
     goals = db.relationship("Goal", backref="user", lazy=True, cascade="all, delete-orphan")
     monthly_summaries = db.relationship("MonthlySummary", backref="user", lazy=True, cascade="all, delete-orphan")
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
 
     def to_dict(self):
         return {

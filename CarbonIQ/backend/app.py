@@ -1,18 +1,23 @@
-
+from dotenv import load_dotenv
+load_dotenv()
 
 from flask import Flask, jsonify
 from flask_cors import CORS
+from extensions import bcrypt, jwt
 from models import db
-from routes import api  # Routes are stored in a separate file
+from routes.routes import api  # Existing app routes
+from routes.dashboard_routes import dashboard_bp
 import os
 
+# Initialize Flask app
 app = Flask(__name__)
-
-# Enable frontend (React/Vite) communication
-CORS(app)
+CORS(app)            # Enable frontend (React/Vite) communication
 
 # Secret key for security
 app.config['SECRET_KEY'] = 'my_secret_key'
+
+# Adds JWT secret key
+app.config['JWT_SECRET_KEY'] = 'supersecretkey' # Change this before deployment!
 
 # Database configuration (SQLite file stored in the project directory)
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -23,10 +28,16 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize database
 db.init_app(app)
+bcrypt.init_app(app)
+jwt.init_app(app)
 
 # Register API routes
 app.register_blueprint(api)
+app.register_blueprint(dashboard_bp)
 
+# Registers new auth routes
+from routes.auth_routes import auth_bp
+app.register_blueprint(auth_bp)
 
 
 @app.route('/')
@@ -35,6 +46,11 @@ def home():
         "message": "Welcome to CarbonIQ API ",
         "status": "running",
         "available_endpoints": {
+            "Auth": {
+                "Signup": "/auth/signup",
+                "Login": "/auth/login",
+                "Protected Example": "/auth/protected"
+            },
             "Dashboard": {
                 "Stats": "/api/dashboard/stats/<user_id>",
                 "Emissions Trend": "/api/dashboard/emissions-trend/<user_id>",
@@ -62,10 +78,10 @@ def health_check():
     })
 
 
-
 @app.errorhandler(404)
 def not_found(e):
     return jsonify({"error": "Not Found", "message": "That route does not exist."}), 404
+
 
 @app.errorhandler(500)
 def internal_error(e):

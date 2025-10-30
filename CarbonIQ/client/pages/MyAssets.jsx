@@ -129,7 +129,7 @@ export default function MyAssetsPage() {
           </div>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition shadow-sm"
+            className="flex items-center gap-2 px-5 py-2.5 bg-green-500 text-white rounded-lg text-sm font-medium hover:bg-green-600 transition hover:scale-105 transition-transform duration-300 shadow-sm"
           >
             <span className="text-lg font-bold">+</span>
             <span>Add Asset</span>
@@ -161,7 +161,7 @@ export default function MyAssetsPage() {
             <p className="text-gray-500 mb-6">Get started by adding your first asset</p>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition"
+              className="px-6 py-3 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition hover:scale-105 transition-transform duration-300"
             >
               Add Your First Asset
             </button>

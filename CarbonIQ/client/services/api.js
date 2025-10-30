@@ -1,5 +1,12 @@
-// services/api.js
 const API_BASE_URL = 'http://localhost:5000/api';
+
+// Helper to include JWT token in headers
+export const authHeaders = () => {
+  const token = localStorage.getItem("token");
+  return token
+    ? { Authorization: `Bearer ${token}` }
+    : {};
+};
 
 // Enhanced response handler
 const handleResponse = async (response) => {
@@ -33,7 +40,11 @@ const handleResponse = async (response) => {
 export const getDashboardStats = async (userId) => {
   try {
     console.log(` Fetching dashboard stats for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/dashboard/stats/${userId}`);
+    const response = await fetch(`${API_BASE_URL}/dashboard/stats/${userId}`, {
+      headers: {
+        ...authHeaders(),
+      },
+    });
     const data = await handleResponse(response);
     console.log(' Dashboard stats loaded');
     return data;
@@ -47,7 +58,11 @@ export const getDashboardStats = async (userId) => {
 export const getEmissionsTrend = async (userId, days = 30) => {
   try {
     console.log(` Fetching emissions trend for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/dashboard/emissions-trend/${userId}?days=${days}`);
+    const response = await fetch(`${API_BASE_URL}/dashboard/emissions-trend/${userId}?days=${days}`, {
+      headers: {
+        ...authHeaders(),
+      },
+    });
     const data = await handleResponse(response);
     console.log(' Emissions trend loaded');
     return data;
@@ -61,7 +76,11 @@ export const getEmissionsTrend = async (userId, days = 30) => {
 export const getTopEmitters = async (userId) => {
   try {
     console.log(` Fetching top emitters for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/dashboard/top-emitters/${userId}`);
+    const response = await fetch(`${API_BASE_URL}/dashboard/top-emitters/${userId}`, {
+      headers: {
+        ...authHeaders(),
+      },
+    });
     const data = await handleResponse(response);
     console.log(' Top emitters loaded');
     return data;
@@ -75,7 +94,11 @@ export const getTopEmitters = async (userId) => {
 export const getRecentActivities = async (userId, limit = 10) => {
   try {
     console.log(` Fetching recent activities for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/dashboard/recent-activities/${userId}?limit=${limit}`);
+    const response = await fetch(`${API_BASE_URL}/dashboard/recent-activities/${userId}?limit=${limit}`, {
+      headers: {
+        ...authHeaders(),
+      },
+    });
     const data = await handleResponse(response);
     console.log(' Recent activities loaded');
     return data;
@@ -89,7 +112,11 @@ export const getRecentActivities = async (userId, limit = 10) => {
 export const getAssets = async (userId) => {
   try {
     console.log(`🔄 Fetching assets for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/assets/${userId}`);
+    const response = await fetch(`${API_BASE_URL}/assets/${userId}`, {
+      headers: {
+        ...authHeaders(),
+      },
+    });
     const data = await handleResponse(response);
     console.log(' Assets loaded');
     return data;
@@ -107,6 +134,7 @@ export const createAsset = async (assetData) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        ...authHeaders(),
       },
       body: JSON.stringify(assetData),
     });
@@ -127,6 +155,7 @@ export const updateAsset = async (assetId, assetData) => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
+        ...authHeaders(),
       },
       body: JSON.stringify(assetData),
     });
@@ -145,6 +174,9 @@ export const deleteAsset = async (assetId) => {
     console.log(` Deleting asset ${assetId}`);
     const response = await fetch(`${API_BASE_URL}/assets/${assetId}`, {
       method: 'DELETE',
+      headers: {
+        ...authHeaders(),
+      },
     });
     const data = await handleResponse(response);
     console.log(' Asset deleted successfully');
