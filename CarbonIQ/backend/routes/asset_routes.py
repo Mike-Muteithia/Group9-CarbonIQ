@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from backend.models import db, Asset, User
+from models import db, Asset, User
 import traceback
 
 asset_bp = Blueprint('asset_bp', __name__)

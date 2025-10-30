@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from sqlalchemy import func, extract
-from backend.models import db, Emission, Asset, Activity, MonthlySummary, User, Goal
+from models import db, Emission, Asset, Activity, MonthlySummary, User, Goal
 from datetime import datetime, timedelta
 import os
 from dotenv import load_dotenv

@@ -4,9 +4,9 @@ load_dotenv()
 from flask import Flask, jsonify
 from flask_migrate import Migrate
 from flask_cors import CORS
-from backend.extensions import bcrypt, jwt
-from backend.models import db
-from backend.config import config
+from extensions import bcrypt, jwt
+from models import db
+from config import config
 import os
 
 def create_app(config_name=None):
@@ -27,13 +27,13 @@ def create_app(config_name=None):
     CORS(app, origins=app.config['CORS_ORIGINS'])
     
     # Register blueprints
-    from backend.routes.routes import api
-    from backend.routes.dashboard_routes import dashboard_bp
-    from backend.routes.asset_routes import asset_bp
-    from backend.routes.activity_routes import activity_bp
-    from backend.routes.ai_routes import ai_bp
-    from backend.routes.goal_routes import goal_bp
-    from backend.routes.auth_routes import auth_bp
+    from routes.routes import api
+    from routes.dashboard_routes import dashboard_bp
+    from routes.asset_routes import asset_bp
+    from routes.activity_routes import activity_bp
+    from routes.ai_routes import ai_bp
+    from routes.goal_routes import goal_bp
+    from routes.auth_routes import auth_bp
     
     app.register_blueprint(api)
     app.register_blueprint(dashboard_bp)

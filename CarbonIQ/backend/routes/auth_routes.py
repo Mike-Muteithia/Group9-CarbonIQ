@@ -6,7 +6,7 @@ import os
 from functools import wraps
 
 # Import database and User model
-from backend.models import db, User
+from models import db, User
 
 auth_bp = Blueprint('auth', __name__)
 

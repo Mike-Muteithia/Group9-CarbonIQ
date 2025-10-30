@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from sqlalchemy import func, extract
 import logging
-from backend.models import db, Emission, MonthlySummary
+from models import db, Emission, MonthlySummary
 
 # Configure logging
 logger = logging.getLogger(__name__)
