@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, Activity, Bot, Target, LogOut } from 'lucide-react';
 import logo from '../assets/logo.png';
@@ -8,7 +8,16 @@ const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeItem, setActiveItem] = useState('Dashboard');
+  const [user, setUser] = useState(null);
   const userId = 1; // Get this from auth context later
+
+  // Get user data from localStorage on component mount
+  useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
   const menuItems = [
     { name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
@@ -81,11 +90,15 @@ const Sidebar = () => {
           {/* Profile */}
           <div className='flex items-center gap-3 mb-3'>
               <div className="w-9 h-9 bg-green-600 text-white rounded-full flex items-center justify-center font-medium">
-                B
+                {user ? user.name?.charAt(0).toUpperCase() || 'U' : 'U'}
               </div>
               <div className="flex flex-col">
-                <p className="text-sm font-semibold text-gray-900 truncate">Beatrice Mwangi</p>
-                <p className="text-xs text-gray-500 truncate">bea@carboniq@gmail.com</p>
+                <p className="text-sm font-semibold text-gray-900 truncate">
+                  {user ? user.name || 'User' : 'Loading...'}
+                </p>
+                <p className="text-xs text-gray-500 truncate">
+                  {user ? user.email || '' : ''}
+                </p>
               </div>
             </div>
 

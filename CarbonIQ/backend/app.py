@@ -7,6 +7,10 @@ from extensions import bcrypt, jwt
 from models import db
 from routes.routes import api  # Existing app routes
 from routes.dashboard_routes import dashboard_bp
+from routes.asset_routes import asset_bp
+from routes.activity_routes import activity_bp
+from routes.ai_routes import ai_bp
+from routes.goal_routes import goal_bp
 import os
 
 # Initialize Flask app
@@ -34,6 +38,10 @@ jwt.init_app(app)
 # Register API routes
 app.register_blueprint(api)
 app.register_blueprint(dashboard_bp)
+app.register_blueprint(asset_bp, url_prefix='/api/assets')
+app.register_blueprint(activity_bp)  # Activities routes
+app.register_blueprint(ai_bp)  # AI EcoCoach routes
+app.register_blueprint(goal_bp)  # Goals routes
 
 # Registers new auth routes
 from routes.auth_routes import auth_bp
@@ -63,6 +71,29 @@ def home():
                 "Create Asset": "POST /api/assets",
                 "Update Asset": "PUT /api/assets/<asset_id>",
                 "Delete Asset": "DELETE /api/assets/<asset_id>"
+            },
+            "Activities": {
+                "All Activities": "/api/activities/<user_id>",
+                "Activity Stats": "/api/activities/stats/<user_id>",
+                "Categories": "/api/activities/categories",
+                "Create Activity": "POST /api/activities",
+                "Update Activity": "PUT /api/activities/<activity_id>",
+                "Delete Activity": "DELETE /api/activities/<activity_id>"
+            },
+            "AI EcoCoach": {
+                "Personalized Insight": "/api/ai/insight/<user_id>",
+                "Chat": "POST /api/ai/chat",
+                "Reduction Tips": "/api/ai/tips?category=<category>&user_id=<user_id>",
+                "Daily Tip": "/api/ai/daily-tip",
+                "Analyze Trend": "/api/ai/analyze-trend/<user_id>"
+            },
+            "Goals": {
+                "All Goals": "/api/goals/<user_id>",
+                "Goal Detail": "/api/goals/detail/<goal_id>",
+                "Goal Stats": "/api/goals/stats/<user_id>",
+                "Create Goal": "POST /api/goals",
+                "Update Goal": "PUT /api/goals/<goal_id>",
+                "Delete Goal": "DELETE /api/goals/<goal_id>"
             },
             "Utilities": {
                 "Health Check": "/health"

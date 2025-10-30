@@ -21,10 +21,29 @@ function MetricsCard({ userId }) {
         const data = await getDashboardStats(userId);
         console.log('✅ Metrics data received:', data);
 
-        if (data.success && data.enhancedData) {
-          setMetrics(data.enhancedData);
+        // The API returns stats directly with totalEmission, thisMonth, etc.
+        // Transform it to the format MetricsCard expects
+        if (data && typeof data === 'object') {
+          const monthlyChange = data.monthly_change || 0;
+          const changeType = monthlyChange > 0 ? 'increase' : monthlyChange < 0 ? 'decrease' : 'neutral';
+          const changePercent = Math.abs(monthlyChange);
+          
+          let message = 'No change this month';
+          if (monthlyChange > 0) {
+            message = `Emissions increased by ${changePercent.toFixed(1)}%`;
+          } else if (monthlyChange < 0) {
+            message = `Emissions reduced by ${changePercent.toFixed(1)}%`;
+          }
+          
+          setMetrics({
+            period: "This Month",
+            change_type: changeType,
+            change_percent: changePercent,
+            message: message,
+            total_emissions: data.totalEmission || 0
+          });
         } else {
-          throw new Error(data.error || 'Invalid data format from server');
+          throw new Error('Invalid data format from server');
         }
 
       } catch (error) {
@@ -34,10 +53,10 @@ function MetricsCard({ userId }) {
         // Fallback: create mock data for development
         setMetrics({
           period: "This Month",
-          change_type: 'decrease',
-          change_percent: 12,
-          message: 'Emissions reduced by 12%',
-          total_emissions: 845.2
+          change_type: 'neutral',
+          change_percent: 0,
+          message: 'Unable to load metrics',
+          total_emissions: 0
         });
       } finally {
         setLoading(false);

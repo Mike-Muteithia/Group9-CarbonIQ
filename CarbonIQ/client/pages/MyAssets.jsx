@@ -1,19 +1,35 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AddAssetForm from '../components/AddAssetForm';
 import { assetsAPI } from '../services/api';
 
 export default function MyAssetsPage() {
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [assets, setAssets] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingAsset, setEditingAsset] = useState(null);
 
-  // User ID (you can get this from auth context later)
-  const userId = 1;
+  // Check authentication
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+    }
+  }, [navigate]);
+
+  // Get user ID from localStorage (authenticated user)
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user?.id;
 
   // Fetch assets from backend
   const fetchAssets = async () => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+    
     try {
       setLoading(true);
       setError(null);
