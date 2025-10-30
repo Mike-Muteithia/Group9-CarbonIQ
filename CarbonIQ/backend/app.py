@@ -24,7 +24,8 @@ def create_app(config_name=None):
     Migrate(app, db)
     
     # Configure CORS based on environment
-    CORS(app, origins=app.config['CORS_ORIGINS'])
+    CORS(app)
+    # origins=app.config['CORS_ORIGINS']
     
     # Register blueprints
     from routes.routes import api
