@@ -40,7 +40,7 @@ const handleResponse = async (response) => {
 export const getDashboardStats = async (userId) => {
   try {
     console.log(`📊 Fetching dashboard stats for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/dashboard/stats/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/stats/${userId}`, {
       headers: {
         ...authHeaders(),
       },
@@ -65,7 +65,7 @@ export const getDashboardStats = async (userId) => {
 export const getEmissionsTrend = async (userId, days = 30) => {
   try {
     console.log(` Fetching emissions trend for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/dashboard/emissions-trend/${userId}?days=${days}`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/emissions-trend/${userId}?days=${days}`, {
       headers: {
         ...authHeaders(),
       },
@@ -83,7 +83,7 @@ export const getEmissionsTrend = async (userId, days = 30) => {
 export const getTopEmitters = async (userId) => {
   try {
     console.log(` Fetching top emitters for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/dashboard/top-emitters/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/top-emitters/${userId}`, {
       headers: {
         ...authHeaders(),
       },
@@ -101,7 +101,7 @@ export const getTopEmitters = async (userId) => {
 export const getRecentActivities = async (userId, limit = 10) => {
   try {
     console.log(` Fetching recent activities for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/dashboard/recent-activities/${userId}?limit=${limit}`, {
+    const response = await fetch(`${API_BASE_URL}/api/dashboard/recent-activities/${userId}?limit=${limit}`, {
       headers: {
         ...authHeaders(),
       },
@@ -254,7 +254,7 @@ export const assetsAPI = {
 export const getActivities = async (userId, category = null) => {
   try {
     console.log(`📋 Fetching activities for user ${userId}`);
-    let url = `${API_BASE_URL}/activities/${userId}`;
+    let url = `${API_BASE_URL}/api/activities/${userId}`;
     if (category) {
       url += `?category=${category}`;
     }
@@ -277,7 +277,7 @@ export const getActivities = async (userId, category = null) => {
 export const createActivity = async (activityData) => {
   try {
     console.log('📝 Creating new activity:', activityData);
-    const response = await fetch(`${API_BASE_URL}/activities`, {
+    const response = await fetch(`${API_BASE_URL}/api/activities`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -298,7 +298,7 @@ export const createActivity = async (activityData) => {
 export const updateActivity = async (activityId, activityData) => {
   try {
     console.log(`📝 Updating activity ${activityId}:`, activityData);
-    const response = await fetch(`${API_BASE_URL}/activities/${activityId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/activities/${activityId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -319,7 +319,7 @@ export const updateActivity = async (activityId, activityData) => {
 export const deleteActivity = async (activityId) => {
   try {
     console.log(`🗑️ Deleting activity ${activityId}`);
-    const response = await fetch(`${API_BASE_URL}/activities/${activityId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/activities/${activityId}`, {
       method: 'DELETE',
       headers: {
         ...authHeaders(),
@@ -338,7 +338,7 @@ export const deleteActivity = async (activityId) => {
 export const getActivityStats = async (userId) => {
   try {
     console.log(`📊 Fetching activity stats for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/activities/stats/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/activities/stats/${userId}`, {
       headers: {
         ...authHeaders(),
       },
@@ -356,7 +356,7 @@ export const getActivityStats = async (userId) => {
 export const getActivityCategories = async () => {
   try {
     console.log('📋 Fetching activity categories');
-    const response = await fetch(`${API_BASE_URL}/activities/categories`, {
+    const response = await fetch(`${API_BASE_URL}/api/activities/categories`, {
       headers: {
         ...authHeaders(),
       },
@@ -386,7 +386,7 @@ export const activitiesAPI = {
 export const getPersonalizedInsight = async (userId) => {
   try {
     console.log(`🤖 Fetching AI insight for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/ai/insight/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/ai/insight/${userId}`, {
       headers: {
         ...authHeaders(),
       },
@@ -404,7 +404,7 @@ export const getPersonalizedInsight = async (userId) => {
 export const chatWithCoach = async (userId, message, conversationHistory = []) => {
   try {
     console.log('💬 Sending message to AI coach');
-    const response = await fetch(`${API_BASE_URL}/ai/chat`, {
+    const response = await fetch(`${API_BASE_URL}/api/ai/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -429,7 +429,7 @@ export const chatWithCoach = async (userId, message, conversationHistory = []) =
 export const getReductionTips = async (category = 'general', userId = null) => {
   try {
     console.log(`💡 Fetching reduction tips for ${category}`);
-    let url = `${API_BASE_URL}/ai/tips?category=${category}`;
+    let url = `${API_BASE_URL}/api/ai/tips?category=${category}`;
     if (userId) {
       url += `&user_id=${userId}`;
     }
@@ -452,7 +452,7 @@ export const getReductionTips = async (category = 'general', userId = null) => {
 export const getDailyTip = async () => {
   try {
     console.log('📅 Fetching daily tip');
-    const response = await fetch(`${API_BASE_URL}/ai/daily-tip`, {
+    const response = await fetch(`${API_BASE_URL}/api/ai/daily-tip`, {
       headers: {
         ...authHeaders(),
       },
@@ -470,7 +470,7 @@ export const getDailyTip = async () => {
 export const analyzeTrend = async (userId) => {
   try {
     console.log(`📈 Analyzing trend for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/ai/analyze-trend/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/ai/analyze-trend/${userId}`, {
       headers: {
         ...authHeaders(),
       },
@@ -499,7 +499,7 @@ export const aiAPI = {
 export const getUserGoals = async (userId) => {
   try {
     console.log(`🎯 Fetching goals for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/goals/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/goals/${userId}`, {
       headers: {
         ...authHeaders(),
       },
@@ -517,7 +517,7 @@ export const getUserGoals = async (userId) => {
 export const getGoalDetail = async (goalId) => {
   try {
     console.log(`🎯 Fetching goal ${goalId}`);
-    const response = await fetch(`${API_BASE_URL}/goals/detail/${goalId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/goals/detail/${goalId}`, {
       headers: {
         ...authHeaders(),
       },
@@ -535,7 +535,7 @@ export const getGoalDetail = async (goalId) => {
 export const createGoal = async (goalData) => {
   try {
     console.log('🎯 Creating new goal');
-    const response = await fetch(`${API_BASE_URL}/goals`, {
+    const response = await fetch(`${API_BASE_URL}/api/goals`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -556,7 +556,7 @@ export const createGoal = async (goalData) => {
 export const updateGoal = async (goalId, updates) => {
   try {
     console.log(`🎯 Updating goal ${goalId}`);
-    const response = await fetch(`${API_BASE_URL}/goals/${goalId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/goals/${goalId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -577,7 +577,7 @@ export const updateGoal = async (goalId, updates) => {
 export const deleteGoal = async (goalId) => {
   try {
     console.log(`🎯 Deleting goal ${goalId}`);
-    const response = await fetch(`${API_BASE_URL}/goals/${goalId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/goals/${goalId}`, {
       method: 'DELETE',
       headers: {
         ...authHeaders(),
@@ -596,7 +596,7 @@ export const deleteGoal = async (goalId) => {
 export const getGoalStats = async (userId) => {
   try {
     console.log(`📊 Fetching goal stats for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/goals/stats/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/api/goals/stats/${userId}`, {
       headers: {
         ...authHeaders(),
       },
@@ -635,7 +635,7 @@ export const goalsAPI = {
 export const getDashboardMetrics = async (userId) => {
   try {
     console.log(`📊 Fetching dashboard metrics for user ${userId}`);
-    const url = `${API_BASE_URL}/dashboard/metrics/${userId}`;
+    const url = `${API_BASE_URL}/api/dashboard/metrics/${userId}`;
     console.log(`📡 Request URL: ${url}`);
     
     const response = await fetch(url);
