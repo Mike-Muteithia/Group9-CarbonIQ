@@ -16,7 +16,13 @@ import os
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app)            # Enable frontend (React/Vite) communication
+Enable CORS for frontend (Vercel) and local development
+CORS(app, resources={r"/*": {
+ "origins": ["https://carbon-iq-kappa.vercel.app", "http://localhost:5173"],
+ "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+ "allow_headers": ["Content-Type", "Authorization"],
+ "supports_credentials": True
+}})
 
 # Secret key for security
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'e4b74003ea8a79e8762bc5a01ae88b37e52b19685acf6207ff177d0777f44181')
