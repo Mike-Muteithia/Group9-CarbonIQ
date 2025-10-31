@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://group9-carboniq-backend.onrender.com';
 
 // Helper to include JWT token in headers
 export const authHeaders = () => {
