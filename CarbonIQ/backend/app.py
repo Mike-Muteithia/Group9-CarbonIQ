@@ -16,7 +16,7 @@ import os
 
 # Initialize Flask app
 app = Flask(__name__)
-Enable CORS for frontend (Vercel) and local development
+# Enable CORS for frontend (Vercel) and local development
 CORS(app, resources={r"/*": {
  "origins": ["https://carbon-iq-kappa.vercel.app", "http://localhost:5173"],
  "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
