@@ -137,7 +137,7 @@ export const getAssets = async (userId) => {
 export const createAsset = async (assetData) => {
   try {
     console.log(' Creating new asset:', assetData);
-    const response = await fetch(`${API_BASE_URL/api/assets}`, {
+    const response = await fetch(`${API_BASE_URL}/api/assets}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
