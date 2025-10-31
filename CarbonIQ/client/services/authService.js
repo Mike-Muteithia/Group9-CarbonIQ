@@ -1,4 +1,4 @@
-const API_BASE_URL = "https://group9-carboniq-backend.onrender.com/auth"; // to be replaced with the live backend URL after deployment of backend
+const API_BASE_URL = "https://group9-carboniq-backend.onrender.com"; // to be replaced with the live backend URL after deployment of backend
 
 
 // Helper function for consistent error and reponse handing
