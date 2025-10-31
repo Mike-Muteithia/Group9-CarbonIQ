@@ -119,7 +119,7 @@ export const getRecentActivities = async (userId, limit = 10) => {
 export const getAssets = async (userId) => {
   try {
     console.log(`🔄 Fetching assets for user ${userId}`);
-    const response = await fetch(`${API_BASE_URL}/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/assets/${userId}`, {
       headers: {
         ...authHeaders(),
       },
@@ -137,7 +137,7 @@ export const getAssets = async (userId) => {
 export const createAsset = async (assetData) => {
   try {
     console.log(' Creating new asset:', assetData);
-    const response = await fetch(`${API_BASE_URL}`, {
+    const response = await fetch(`${API_BASE_URL/assets}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -158,7 +158,7 @@ export const createAsset = async (assetData) => {
 export const updateAsset = async (assetId, assetData) => {
   try {
     console.log(` Updating asset ${assetId}:`, assetData);
-    const response = await fetch(`${API_BASE_URL}/${assetId}`, {
+    const response = await fetch(`${API_BASE_URL}/assets/${assetId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -179,7 +179,7 @@ export const updateAsset = async (assetId, assetData) => {
 export const deleteAsset = async (assetId) => {
   try {
     console.log(` Deleting asset ${assetId}`);
-    const response = await fetch(`${API_BASE_URL}/${assetId}`, {
+    const response = await fetch(`${API_BASE_URL}/assets/${assetId}`, {
       method: 'DELETE',
       headers: {
         ...authHeaders(),

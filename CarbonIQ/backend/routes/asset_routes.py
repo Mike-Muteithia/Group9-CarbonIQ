@@ -5,7 +5,7 @@ import traceback
 asset_bp = Blueprint('asset_bp', __name__)
 
 # GET ALL ASSETS
-@asset_bp.route('/<int:user_id>', methods=['GET'])
+@asset_bp.route('/assets/<int:user_id>', methods=['GET'])
 def get_assets(user_id):
     """
     Get all assets for a user (for My Assets page)
@@ -33,7 +33,7 @@ def get_assets(user_id):
 
 
 # CREATE NEW ASSET
-@asset_bp.route('', methods=['POST'])
+@asset_bp.route('/assets', methods=['POST'])
 def create_asset():
     """
     Create a new asset
@@ -86,7 +86,7 @@ def create_asset():
 
 
 # UPDATE ASSET
-@asset_bp.route('/<int:asset_id>', methods=['PUT'])
+@asset_bp.route('/assets/<int:asset_id>', methods=['PUT'])
 def update_asset(asset_id):
     """
     Update an existing asset
@@ -134,7 +134,7 @@ def update_asset(asset_id):
 
 
 # DELETE ASSET
-@asset_bp.route('/<int:asset_id>', methods=['DELETE'])
+@asset_bp.route('/assets/<int:asset_id>', methods=['DELETE'])
 def delete_asset(asset_id):
     """
     Delete an asset (soft delete by setting status to 'deleted')
@@ -163,7 +163,7 @@ def delete_asset(asset_id):
 
 
 # GET SINGLE ASSET
-@asset_bp.route('/single/<int:asset_id>', methods=['GET'])
+@asset_bp.route('/assets/single/<int:asset_id>', methods=['GET'])
 def get_single_asset(asset_id):
     """
     Get details of a single asset
